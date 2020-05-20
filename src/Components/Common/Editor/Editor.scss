@@ -1,0 +1,40 @@
+@import "src/Style/global.scss";
+
+.ck-editor {
+  border-color: #c9cacb !important;
+
+  ol {
+    padding-left: 30px;
+
+    li {
+      list-style: decimal;
+    }
+  }
+
+  ul {
+    padding-left: 30px;
+
+    li {
+      list-style: disc;
+    }
+  }
+
+  .ck.ck-toolbar {
+    background-color: white;
+    border-top-left-radius: 6px !important;
+    border-top-right-radius: 6px !important;
+    border-color: $theme-grey6 !important;
+  }
+
+  .ck.ck-button:not(.ck-disabled):hover {
+    background-color: $theme-grey5;
+  }
+
+  .ck-content {
+    height: 600px;
+  }
+
+  .ck.ck-editor__main > .ck-editor__editable {
+    box-shadow: none !important;
+  }
+}

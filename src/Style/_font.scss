@@ -1,0 +1,72 @@
+/* ------------------------------------------------------------------ */
+/**
+    self-hosted font 들을 font-face 로 정의하는 곳입니다.
+    _app.js 에서 단 한 번 import 됩니다.
+    구글 폰트는 _document.js 에서 link 태그의 형태로 삽입해줍니다.
+**/
+/* ------------------------------------------------------------------ */
+
+// HG꼬딕씨
+@font-face {
+  font-family: "Gothicssi";
+  src: url("/Fonts/HGggothic/HGGGOTHICSSI80G.ttf") format("truetype"),
+    url("/Fonts/HGggothic/HGGGOTHICSSI80G.woff") format("woff"),
+    url("/Fonts/HGggothic/HGGGOTHICSSI80G.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+// SOFT꼬딕씨 크기별 import
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-00G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-00G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-00G.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-20G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-20G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-20G.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-40G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-40G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-40G.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-60G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-60G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-60G.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-80G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-80G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-80G.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SoftGothicssi";
+  src: url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-99G.woff2") format("woff2"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-99G.woff") format("woff"),
+    url("/Fonts/SOFTggothic/HGSOFTGGOTHICSSI-99G.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}

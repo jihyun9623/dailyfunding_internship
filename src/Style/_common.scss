@@ -1,0 +1,190 @@
+@import "./global";
+
+/* ---------------------------------------------------------
+전체 컴포넌트에 공통적으로 사용되는 css 속성을 모아놓은 곳입니다.
+--------------------------------------------------------- */
+
+body {
+  margin: 0;
+  // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  //   "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  //   sans-serif;
+  // -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.overflow_hidden,
+html.overflow_hidden {
+  overflow: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.container {
+  padding-top: 85px;
+  // overflow-y: hidden;
+  // 이걸 활성화시키면 position: sticky 가 작동하지 않습니다.
+  color: $theme-black2;
+  font-family: $font-kr2;
+  word-break: keep-all;
+  min-width: 320px;
+
+  @media #{$desk-L} {
+    padding-top: 63px;
+  }
+
+  &.mobile {
+    padding-top: 63px;
+  }
+}
+
+// html {
+// scroll-behavior: smooth;
+// }
+
+input {
+  font-family: $font-kr2;
+
+  &::placeholder {
+    font-family: $font-kr2;
+  }
+}
+
+select {
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) 50%;
+  font-family: $font-kr2;
+  color: $theme-black2;
+}
+
+textarea {
+  font-family: $font-kr2;
+}
+
+button {
+  user-select: none;
+}
+
+.customized_check {
+  width: 25px;
+  height: 25px;
+  border: 1px solid $theme-grey4;
+  background-color: white;
+  cursor: pointer;
+}
+
+.customized_check.true {
+  border: 1px solid $theme-blue1;
+  background-image: url("/Img/check_blue.png");
+  background-size: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.customized_check.disabled {
+  background-color: #ecf2f7;
+  cursor: initial;
+}
+
+/* -------------------------------------
+sweetalert 라이브러리 관련 css입니다.
+------------------------------------- */
+
+.swal-modal {
+  background-color: white !important;
+  border-radius: 0 !important;
+  word-break: keep-all;
+  font-family: $font-kr2;
+  // padding-bottom: 15px !important;
+}
+
+.swal-text {
+  font-family: $font-kr2 !important;
+  font-weight: 600 !important;
+  color: lighten($theme-black2, 10%) !important;
+  text-align: center !important;
+}
+
+.swal-footer {
+  display: flex;
+  margin-top: 40px !important;
+  padding: 0 !important;
+
+  .swal-button-container {
+    margin: 0 !important;
+    width: 100% !important;
+
+    .swal-button {
+      background-color: $theme-blue3 !important;
+      transition: background-color 0.2s ease-out !important;
+      color: white !important;
+      border-radius: 0px !important;
+      border: none;
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      padding: 8px 15px !important;
+      width: 100% !important;
+      height: 58px !important;
+
+      &:hover {
+        background-color: darken($theme-blue3, 20%) !important;
+        transition: background-color 0.2s ease-out !important;
+      }
+    }
+
+    .swal-button--cancel {
+      background-color: $theme-grey1 !important;
+      color: $theme-black2 !important;
+
+      &:hover {
+        background-color: darken($theme-grey1, 10%) !important;
+        color: $theme-black2 !important;
+      }
+    }
+
+    .swal-button--danger {
+      background-color: #ff4d45 !important;
+
+      &:hover {
+        background-color: darken(#ff4d45, 20%) !important;
+      }
+    }
+  }
+}
+
+/* ---------------------------------------------------------
+google-recaptcha 를 숨김 처리하는 css입니다.
+recaptcha 를 사용하는 페이지에서는 반드시
+해당 페이지가 recaptcha를 사용하고 있다는 공지를 해야만 합니다. 공식 문서를 참고해주세요.
+------------------------------------------- 20-05-08 update
+리캡차가 필요한 페이지에서만 execute 되도록 수정했으므로 뱃지를 숨길 필요 없음.
+디자인팀 측에서도 안내 문구보다는 뱃지 노출이 낫다고 하심.
+--------------------------------------------------------- */
+
+// .grecaptcha-badge {
+//   visibility: hidden;
+// }
+
+.input_hidden {
+  display: none;
+}
+/* ---------------------------------------------------------
+DatePicker css입니다.
+--------------------------------------------------------- */
+
+.SingleDatePicker_picker {
+  z-index: 100;
+}
+
+/* ---------------------------------------------------------
+모달 폰트 설정입니다.
+--------------------------------------------------------- */
+#modal {
+  font-family: $font-kr2;
+}

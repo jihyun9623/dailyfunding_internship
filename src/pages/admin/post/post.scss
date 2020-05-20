@@ -1,0 +1,135 @@
+@import "src/Style/global.scss";
+
+.admin_post_list_wrapper {
+  max-width: 1200px;
+
+  .complicated_info_wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    .complicated_info_div {
+      margin: 0 !important;
+    }
+  }
+
+  .post_unit_wrap {
+    margin-top: 20px;
+
+    .post_unit {
+      display: flex;
+      padding: 25px 0;
+      border-bottom: 1px solid $theme-grey9;
+
+      &:last-child {
+        border: none;
+      }
+
+      .left_div {
+        width: 250px;
+        height: 200px;
+        border-radius: 6px;
+        background-color: $theme-grey5;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+
+      .right_div {
+        position: relative;
+        width: calc(100% - 260px);
+
+        .category_div {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+
+          .category {
+            border-radius: 15px;
+            padding: 3px 8px;
+
+            &.category_1 {
+              background-color: #d7f0ff;
+              color: #0081ff;
+            }
+
+            &.category_2 {
+              background-color: #ffe6eb;
+              color: #ff3831;
+            }
+
+            &.category_3 {
+              background-color: #fce7c1;
+              color: #ff6600;
+            }
+
+            &.category_4 {
+              color: #4ebd74;
+              background-color: rgba(78, 189, 116, 0.25);
+            }
+          }
+
+          .hits {
+            display: flex;
+            align-items: center;
+            color: #c9cacb;
+
+            img {
+              height: 15px;
+            }
+          }
+        }
+
+        .title_description_div {
+          &:hover {
+            .title,
+            .description {
+              cursor: pointer;
+              text-decoration: underline;
+            }
+          }
+
+          .title {
+            display: block;
+            display: -webkit-box;
+            max-width: 100%;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+          }
+
+          .description {
+            display: block;
+            display: -webkit-box;
+            max-width: 100%;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .bottom_div {
+          display: flex;
+          justify-content: space-between;
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+
+          .date {
+            color: #afb9c1;
+          }
+
+          .delete_btn {
+            cursor: pointer;
+            user-select: none;
+          }
+        }
+      }
+    }
+  }
+}

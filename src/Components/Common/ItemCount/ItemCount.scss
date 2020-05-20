@@ -1,0 +1,30 @@
+@import "src/Style/global.scss";
+
+.item_count_div {
+  display: inline-block;
+
+  p {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .item_count {
+    display: inline-block;
+    margin-right: 10px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    background-color: $theme-grey5;
+    cursor: pointer;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .selected {
+    background-color: rgba(0, 129, 255, 0.2) !important;
+    color: $theme-blue1;
+  }
+}

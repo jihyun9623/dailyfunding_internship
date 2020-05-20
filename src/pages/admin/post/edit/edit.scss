@@ -1,0 +1,195 @@
+@import "src/Style/global.scss";
+
+.admin_post_add_wrapper {
+  max-width: 1400px;
+
+  .post_info_div {
+    display: flex;
+    margin-bottom: 30px;
+
+    // left, right에 적용되는 공통 css
+    .row {
+      width: 100%;
+      margin-bottom: 25px;
+
+      &:last-child {
+        margin: 0;
+      }
+    }
+
+    .label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+
+      u {
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .info {
+        font-size: 13px;
+        font-weight: 400;
+        color: #afb9c1;
+        margin-left: 10px;
+      }
+    }
+
+    // left
+    .left_div {
+      width: 350px;
+      padding-top: 5px;
+      padding-right: 30px;
+      border-right: 1px solid #e8eef5;
+      margin-right: 30px;
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .image_thumbnail {
+        width: 100%;
+        height: 210px;
+        padding-top: 145px;
+        background-color: $theme-grey5;
+        background-image: url("/Img/picture.png");
+        background-size: 30%;
+        background-position: 50% 27%;
+        background-repeat: no-repeat;
+
+        button {
+          display: block;
+          margin: 0 auto;
+          background-color: $theme-blue1;
+          box-shadow: rgba(0, 0, 0, 0.024) 0px 0px 4px;
+        }
+      }
+    }
+
+    // right
+    .right_div {
+      width: calc(100% - 380px);
+      padding-top: 5px;
+
+      .two_section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+
+        .row {
+          width: unset;
+          margin-bottom: 0;
+
+          &.title_row {
+            width: 100%;
+            margin-left: 20px;
+          }
+        }
+      }
+
+      .textarea_default {
+        height: 113px;
+      }
+
+      .charactor_limit {
+        font-size: 13px;
+        color: #afb9c1;
+        text-align: right;
+      }
+    }
+
+    // 태그
+    .ReactTags__tag {
+      display: inline-block;
+      text-align: center;
+      padding: 0 12px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      background-color: $theme-grey5;
+      color: $theme-blue1;
+      font-size: 14px;
+      line-height: 33px;
+      border-radius: 20px;
+      cursor: default;
+    }
+
+    a.ReactTags__remove {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+
+    .ReactTags__tagInput {
+      display: inline-block;
+    }
+
+    .ReactTags__tagInputField {
+      width: 190px;
+      height: 33px;
+      border: none;
+      font-size: 15px;
+      margin-bottom: 10px;
+
+      &::placeholder {
+        font-size: 15px;
+      }
+    }
+
+    .ReactTags__suggestions {
+      position: absolute;
+      border: 1px solid #afb9c1;
+      background-color: white;
+      z-index: 100;
+
+      > ul > li {
+        padding: 10px 15px;
+      }
+    }
+
+    .ReactTags__suggestion {
+      background-color: $theme-grey5;
+    }
+
+    .ReactTags__activeSuggestion {
+      background-color: $theme-blue1;
+      color: white;
+      // padding: 10px;
+    }
+  }
+
+  .divide_line {
+    margin-bottom: 25px;
+    width: 80px;
+    height: 7px;
+    background-color: $theme-grey6;
+  }
+
+  .confirm_btn_div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+
+    .admin_white_btn,
+    .admin_blue_btn {
+      padding: 7px 12px;
+      font-size: 15px;
+    }
+
+    .admin_white_btn {
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 15px;
+        margin-right: 10px;
+        margin-top: 2px;
+      }
+    }
+  }
+}

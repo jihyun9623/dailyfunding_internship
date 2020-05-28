@@ -5,7 +5,7 @@ import ItemCount from "Components/Common/ItemCount/ItemCount";
 import Pagination from "Components/Common/Pagination/Pagination";
 import { numberFormat } from "Utils/Number";
 
-import Eye from "@Img/eye_icon.png";
+import Eye from "@Img/eye_icon.svg";
 import "./post.scss";
 
 const des =

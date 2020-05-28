@@ -1,0 +1,601 @@
+@import "src/Style/global.scss";
+
+.dailyblog_main_wrapper {
+  position: relative;
+
+  header.top_div {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: white;
+    padding: 27px 41px 0 31px;
+    z-index: 100;
+
+    @media #{$phone} {
+      padding: 27px 26px;
+    }
+
+    > img {
+      height: 38px;
+
+      @media #{$desk-L} {
+        height: 34px;
+      }
+
+      @media #{$pad} {
+        height: 23px;
+      }
+    }
+
+    > a > p {
+      display: flex;
+      align-items: center;
+      font-family: $font-kr2;
+      font-size: 18px;
+      letter-spacing: -1.08px;
+      user-select: none;
+      cursor: pointer;
+
+      @media #{$desk-L} {
+        font-size: 16px;
+      }
+
+      @media #{$pad} {
+        font-size: 12px;
+      }
+
+      img {
+        width: 29px;
+
+        @media #{$desk-L} {
+          width: 25px;
+        }
+
+        @media #{$pad} {
+          width: 16px;
+        }
+      }
+
+      span {
+        margin-right: 6px;
+      }
+    }
+  }
+
+  // 캐러셀 (헤더)
+  section.carousel_wrap {
+    .carousel_item {
+      position: static;
+      width: 100%;
+      height: 814px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url("/Img/sample_1.png");
+      // background-attachment: fixed;
+
+      @media #{$pad} {
+        height: 580px;
+      }
+
+      @media #{$phone} {
+        height: 427px;
+      }
+
+      .carousel_cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00010280;
+        color: white;
+        padding-top: 300px;
+
+        @media #{$desk-L} {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-top: 0;
+        }
+
+        @media #{$phone} {
+          padding-top: 185px;
+          align-items: flex-start;
+        }
+
+        .center_div {
+          text-align: center;
+          cursor: pointer;
+
+          @media #{$phone} {
+            text-align: left;
+            padding: 0 26px;
+          }
+
+          .category_badge {
+            display: inline-block;
+            border-radius: 22px;
+            border: 1px solid white;
+            padding: 4px 26px;
+            font-size: 23px;
+            font-weight: 300;
+            letter-spacing: -1.38px;
+            margin-bottom: 18px;
+            user-select: none;
+
+            @media #{$desk-L} {
+              font-size: 20px;
+              margin-bottom: 25px;
+            }
+
+            @media #{$pad} {
+              font-size: 14px;
+              padding: 4px 14px;
+              margin-bottom: 10px;
+            }
+
+            @media #{$phone} {
+              font-size: 12px;
+              letter-spacing: -0.72px;
+            }
+          }
+
+          .title {
+            font-size: 48px;
+            font-weight: 500;
+            letter-spacing: -2.88px;
+            max-width: 878px;
+            margin: 0 auto 22px auto;
+            user-select: none;
+
+            @media #{$desk-L} {
+              font-size: 44px;
+              padding: 0 140px;
+              margin-bottom: 20px;
+            }
+
+            @media #{$pad} {
+              font-size: 35px;
+              line-height: 45px;
+              letter-spacing: -1.86px;
+              padding: 0 80px;
+            }
+
+            @media only screen and (max-width: 500px) {
+              padding: 0 40px;
+            }
+
+            @media #{$phone} {
+              font-size: 31px;
+              line-height: 39px;
+              letter-spacing: -1.86px;
+              padding: 0;
+              margin-bottom: 10px;
+
+              // 3줄 초과 ellipsis
+              display: block;
+              display: -webkit-box;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          .subtitle {
+            font-size: 20px;
+            letter-spacing: -1.2px;
+            user-select: none;
+
+            @media #{$desk-L} {
+              font-size: 17px;
+            }
+
+            @media #{$pad} {
+              font-size: 13px;
+              letter-spacing: -0.66px;
+            }
+
+            @media #{$phone} {
+              font-size: 11px;
+            }
+          }
+        }
+
+        // 날짜
+        .bottom_div {
+          position: absolute;
+          right: 43px;
+          bottom: 36px;
+          font-size: 22px;
+          font-weight: 300;
+          font-family: $font-kr2;
+          text-align: right;
+          user-select: none;
+
+          @media #{$desk-L} {
+            font-size: 19px;
+          }
+
+          @media #{$pad} {
+            font-size: 16px;
+          }
+
+          @media #{$phone} {
+            font-size: 13px;
+            right: 26px;
+            bottom: 23px;
+          }
+        }
+      }
+    }
+
+    // 캐러셀 화살표
+    > button {
+      display: none;
+      position: absolute;
+      top: 372px;
+      border: none;
+      width: 63px;
+      height: 63px;
+      background-color: transparent;
+      cursor: pointer;
+
+      &.carousel_left_btn {
+        left: 68px;
+      }
+
+      &.carousel_right_btn {
+        right: 68px;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    // 캐러셀에 hover 시에만 화살표 노출
+    &:hover {
+      > button {
+        display: block;
+
+        @media #{$pad} {
+          display: none;
+        }
+      }
+    }
+
+    // 캐러셀 dots
+    .alice-carousel__dots {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      margin: 0 0 30px 0;
+
+      @media #{$phone} {
+        margin-bottom: 23px;
+        margin-left: 26px;
+        width: unset;
+      }
+    }
+
+    .alice-carousel__dots-item {
+      background-color: white;
+      width: 11px;
+      height: 11px;
+      opacity: 0.3;
+      margin: 0 8px;
+
+      &.__active {
+        opacity: 0.8;
+      }
+
+      @media #{$desk-L} {
+        width: 9px;
+        height: 9px;
+        margin: 0 6px;
+      }
+
+      @media #{$phone} {
+        width: 8px;
+        height: 8px;
+        margin: 0 4px;
+      }
+    }
+  }
+
+  // 블로그 포스팅 파트
+  section.articles_list_wrap {
+    max-width: 1046px;
+    margin: 0 auto;
+    padding-top: 81px;
+    padding-bottom: 70px;
+
+    @media #{$desk-L} {
+      max-width: 900px;
+      padding: 60px 40px;
+    }
+
+    @media #{$pad} {
+      max-width: 600px;
+      padding: 40px 40px 50px 40px;
+    }
+
+    @media #{$phone} {
+      padding: 26px 26px 47px 26px;
+    }
+
+    // 카테고리 선택 버튼
+    .category_div {
+      text-align: center;
+      margin-bottom: 89px;
+
+      @media #{$desk-L} {
+        max-width: 600px;
+        margin: 0 auto 70px auto;
+      }
+
+      @media #{$desk-L} {
+        margin-bottom: 40px;
+      }
+
+      @media #{$pad} {
+        margin-bottom: 30px;
+      }
+
+      @media #{$phone} {
+        margin-bottom: 22px;
+      }
+
+      .category_badge {
+        display: inline-block;
+        border-radius: 22px;
+        padding: 4px 25px 5px 25px;
+        margin: 0 8px;
+        border: 1px solid #909090;
+        color: $theme-black2;
+        opacity: 0.4;
+        margin-bottom: 16px;
+        cursor: pointer;
+        user-select: none;
+
+        &.active,
+        &:hover {
+          opacity: 1;
+        }
+
+        @media #{$pad} {
+          margin: 0 5px;
+          margin-bottom: 10px;
+          padding: 5px 20px;
+          font-size: 14px;
+          letter-spacing: -0.78px;
+        }
+
+        @media #{$phone} {
+          margin: 0 3px;
+          margin-bottom: 8px;
+          padding: 5px 14px;
+          font-size: 13px;
+        }
+      }
+    }
+
+    // 포스트 리스트
+    .articles_list_div {
+      margin-bottom: 83px;
+
+      @media #{$desk-L} {
+        margin-bottom: 70px;
+      }
+
+      @media #{$pad} {
+        margin-bottom: 40px;
+      }
+
+      @media #{$phone} {
+        margin-bottom: 23px;
+      }
+
+      .article_item {
+        display: flex;
+        margin-bottom: 77px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        @media #{$pad} {
+          flex-wrap: wrap;
+          margin-bottom: 53px;
+        }
+
+        .picture_div {
+          width: 555px;
+          height: 312px;
+          margin-right: 42px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-image: url("/Img/sample_1.png");
+          transition: transform 0.2s;
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(1.2);
+
+            @media #{$pad} {
+              transform: unset;
+            }
+          }
+
+          @media #{$desk-L} {
+            width: 55%;
+            height: 260px;
+          }
+
+          @media #{$pad} {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 18px;
+          }
+
+          @media #{$pad} {
+            height: 204px;
+          }
+        }
+
+        .info_div {
+          width: calc(100% - 597px);
+
+          @media #{$desk-L} {
+            width: 45%;
+          }
+
+          @media #{$pad} {
+            width: 100%;
+          }
+
+          .category_badge {
+            display: inline-block;
+            background-color: #0000007b;
+            color: white;
+            padding: 4px 19px;
+            font-size: 18px;
+            letter-spacing: -1.08px;
+            margin-bottom: 5px;
+            user-select: none;
+
+            @media #{$desk-L} {
+              font-size: 16px;
+            }
+
+            @media #{$pad} {
+              font-size: 13px;
+              letter-spacing: -0.78px;
+              padding: 3px 8px;
+            }
+          }
+
+          .title {
+            color: $theme-black2;
+            font-size: 28px;
+            letter-spacing: -1.68px;
+            line-height: 37px;
+            margin-bottom: 17px;
+            user-select: none;
+            cursor: pointer;
+
+            &:hover {
+              color: #0099ff;
+            }
+
+            @media #{$desk-L} {
+              font-size: 25px;
+              line-height: 34px;
+              margin-bottom: 12px;
+            }
+
+            @media #{$pad} {
+              font-size: 21px;
+              line-height: 30px;
+              letter-spacing: -1.26px;
+              margin-bottom: 9px;
+            }
+          }
+
+          .description {
+            display: block;
+            display: -webkit-box;
+            color: $theme-black2;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: -1.08px;
+            line-height: 28px;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 10px;
+
+            @media #{$desk-L} {
+              font-size: 16px;
+              line-height: 26px;
+            }
+
+            @media #{$pad} {
+              font-size: 13px;
+              line-height: 21px;
+              letter-spacing: -0.78px;
+              margin-bottom: 7px;
+            }
+          }
+
+          .item_more_btn {
+            display: inline-block;
+            color: $theme-black2;
+            font-family: $font-kr2;
+            font-size: 18px;
+            letter-spacing: -1.08px;
+            user-select: none;
+            cursor: pointer;
+
+            &:hover {
+              color: #0099ff;
+            }
+
+            @media #{$desk-L} {
+              font-size: 16px;
+            }
+
+            @media #{$pad} {
+              font-size: 14px;
+              letter-spacing: -0.84px;
+            }
+          }
+        }
+      }
+    }
+
+    .more_btn_div {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      user-select: none;
+      cursor: pointer;
+
+      p {
+        width: 100%;
+        text-align: center;
+        font-family: $font-kr2;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -1.32px;
+        color: #747474;
+        margin-bottom: 8px;
+
+        @media #{$desk-L} {
+          font-size: 20px;
+        }
+
+        @media #{$pad} {
+          font-size: 16px;
+          letter-spacing: -0.96px;
+          margin-bottom: 6px;
+        }
+      }
+
+      img {
+        width: 12px;
+
+        @media #{$pad} {
+          width: 9px;
+        }
+      }
+    }
+  }
+}

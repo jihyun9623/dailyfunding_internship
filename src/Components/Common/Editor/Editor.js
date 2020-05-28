@@ -266,7 +266,7 @@ class Editor extends React.Component {
               "strikethrough",
               "|",
               "fontFamily",
-              "fontSize",
+              // "fontSize",
               "fontColor",
               "fontBackgroundColor",
               "|",
@@ -324,9 +324,9 @@ class Editor extends React.Component {
                 "SoftGothicssi",
               ],
             },
-            fontSize: {
-              options: [11, 13, 14, 15, 16, 19, 24, 28, 30, 34, 38],
-            },
+            // fontSize: {
+            //   options: [16, 19, 22, 24, 28, 30, 34, 38],
+            // },
             alignment: {
               options: ["justify", "left", "center", "right"],
             },

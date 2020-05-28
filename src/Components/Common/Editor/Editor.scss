@@ -30,8 +30,81 @@
     background-color: $theme-grey5;
   }
 
+  .ck.ck-heading_paragraph {
+    font-size: 22px;
+    font-weight: 300;
+  }
+
+  .ck.ck-heading_heading1 {
+    font-size: 30px;
+    font-weight: 500;
+  }
+
+  .ck.ck-heading_heading2 {
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .ck.ck-heading_heading3 {
+    font-size: 22px;
+    font-weight: 500;
+  }
+
   .ck-content {
     height: 600px;
+    font-size: 22px;
+    font-weight: 300;
+    font-family: $font-kr4;
+    letter-spacing: -0.66px;
+    line-height: 1.75;
+
+    @media #{$pad} {
+      font-size: 18px;
+      letter-spacing: -0.54px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 500;
+
+      @media #{$pad} {
+        font-size: 26px;
+      }
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 500;
+
+      @media #{$pad} {
+        font-size: 22px;
+      }
+    }
+
+    h3 {
+      font-size: 22px;
+      font-weight: 500;
+
+      @media #{$pad} {
+        font-size: 18px;
+      }
+    }
+
+    hr {
+      width: 483px;
+      height: 21px;
+      margin: 60px auto;
+      border: none;
+      background-image: url("/Img/hr_bar@2x.png");
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+
+      @media #{$pad} {
+        width: 100%;
+        background-size: contain;
+      }
+    }
   }
 
   .ck.ck-editor__main > .ck-editor__editable {

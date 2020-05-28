@@ -11,6 +11,11 @@ body {
   //   sans-serif;
   // -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color: $theme-black2;
+  font-family: $font-kr4;
+  word-break: break-all;
+  min-width: 320px;
 }
 
 body.overflow_hidden,
@@ -24,24 +29,6 @@ html.overflow_hidden {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
-
-.container {
-  padding-top: 85px;
-  // overflow-y: hidden;
-  // 이걸 활성화시키면 position: sticky 가 작동하지 않습니다.
-  color: $theme-black2;
-  font-family: $font-kr2;
-  word-break: keep-all;
-  min-width: 320px;
-
-  @media #{$desk-L} {
-    padding-top: 63px;
-  }
-
-  &.mobile {
-    padding-top: 63px;
-  }
 }
 
 // html {
@@ -68,7 +55,9 @@ textarea {
 }
 
 button {
+  background-color: transparent;
   user-select: none;
+  font-family: $font-kr4;
 }
 
 .customized_check {
@@ -121,7 +110,7 @@ sweetalert 라이브러리 관련 css입니다.
     width: 100% !important;
 
     .swal-button {
-      background-color: $theme-blue3 !important;
+      background-color: #505050 !important;
       transition: background-color 0.2s ease-out !important;
       color: white !important;
       border-radius: 0px !important;
@@ -133,8 +122,12 @@ sweetalert 라이브러리 관련 css입니다.
       height: 58px !important;
 
       &:hover {
-        background-color: darken($theme-blue3, 20%) !important;
+        background-color: darken(#505050, 20%) !important;
         transition: background-color 0.2s ease-out !important;
+      }
+
+      &:focus {
+        box-shadow: none;
       }
     }
 

@@ -7,6 +7,7 @@ import "Style/_font.scss";
 
 // 라이브러리 css
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import "react-alice-carousel/lib/alice-carousel.css";
 
 export default class DailyApp extends App {
   render() {

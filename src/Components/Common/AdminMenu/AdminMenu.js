@@ -145,7 +145,9 @@ class AdminMenu extends React.PureComponent {
               ) : (
                 <Link href={el.menu_url}>
                   <li
-                    className={`child_${num}`}
+                    className={`child_${num} ${
+                      this.props.router.pathname === el.menu_url ? "active" : ""
+                    }`}
                     value={el.menu_url}
                     ref={
                       this.props.router.pathname.indexOf(el.menu_url) !== -1

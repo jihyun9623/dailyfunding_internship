@@ -1,209 +1,255 @@
-import Link from "next/link";
+// import Link from "next/link";
 
 import AdminLayout from "Components/Common/Layout/AdminLayout/AdminLayout";
-import ItemCount from "Components/Common/ItemCount/ItemCount";
-import Pagination from "Components/Common/Pagination/Pagination";
-import { numberFormat } from "Utils/Number";
 
-// import Eye from "@Img/eye_icon.png";
+import xButton from "@Img/red_x_btn.svg";
 import "./category.scss";
 
 class CategoryList extends React.Component {
   state = {
-    itemCount: 20,
-    pageNum: 1,
-    category: "total",
     categoryList: [
       {
-        text: "전체",
-        value: "total",
+        category_name: "데일리언",
+        url_name: "dailian",
+        sorting_number: 1,
       },
       {
-        text: "데일리언",
-        value: "dailian",
+        category_name: "개발",
+        url_name: "development",
+        sorting_number: 2,
       },
       {
-        text: "개발",
-        value: "development",
+        category_name: "꿀팁",
+        url_name: "honeytip",
+        sorting_number: 3,
       },
       {
-        text: "꿀팁",
-        value: "honeytip",
-      },
-      {
-        text: "정보",
-        value: "information",
+        category_name: "정보",
+        url_name: "information",
+        sorting_number: 4,
       },
     ],
-    alignBy: "newest",
-    searchType: "title",
+    newItem: {
+      category_name: "",
+      url_name: "",
+      sorting_number: 1,
+    },
   };
 
   componentDidMount = () => {
-    this.getPostList();
+    this.sortSection = React.createRef();
+    document.addEventListener("mousedown", this.handleClickOutside);
+
+    this.getCategoryList();
   };
 
-  getPostList = () => {
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
+
+  getCategoryList = () => {
     console.log(1);
   };
 
-  handleItemCount = (num) => {
-    this.setState(
-      {
-        itemCount: num,
-        pageNum: 1,
-      },
-      () => this.getPostList(),
-    );
-  };
+  // reorder 내부의 input 편집
+  setInput = (e, idx, key) => {
+    const { categoryList } = this.state;
 
-  setInput = (e) => {
+    categoryList[idx][key] = e.target.value;
+
     this.setState({
-      [e.target.name]: e.target.value,
+      categoryList,
     });
   };
 
-  handleSearch = () => {
-    this.setState(
-      {
-        pageNum: 1,
-      },
-      () => this.getPostList(),
-    );
+  // 신규 카테고리 추가 내부의 input 편집
+  setNewInput = (e, key) => {
+    const { newItem } = this.state;
+
+    newItem[key] = e.target.value;
+
+    this.setState({
+      newItem,
+    });
   };
 
-  linkPage = (num) => {
-    this.setState(
-      {
-        pageNum: num,
+  // 등록
+  addNewItem = () => {
+    const { categoryList, newItem } = this.state;
+
+    categoryList.push(newItem);
+
+    this.setState({
+      categoryList,
+      newItem: {
+        category_name: "",
+        url_name: "",
+        sorting_number: 1,
       },
-      () => this.getPostList(),
-    );
+    });
+  };
+
+  // 특정 파트 바깥부분 클릭 감지
+  handleClickOutside = (event) => {
+    if (
+      this.sortSection.current &&
+      !this.sortSection.current.contains(event.target)
+    ) {
+      this.setState({
+        selectedCategory: undefined,
+      });
+    }
+  };
+
+  // 카테고리 선택
+  selectCategory = (idx) => {
+    this.setState({
+      selectedCategory: idx,
+    });
+  };
+
+  // 위로, 아래로 버튼을 통해 카테고리 순서 변경
+  handleReorder = (type) => {
+    const { selectedCategory, categoryList } = this.state;
+
+    // 위로 올리기
+    if (type === "up" && selectedCategory !== 0) {
+      const editItem = categoryList[selectedCategory];
+      categoryList.splice(selectedCategory, 1);
+      categoryList.splice(selectedCategory - 1, 0, editItem);
+
+      this.setState({
+        categoryList,
+        selectedCategory: selectedCategory - 1,
+      });
+    }
+
+    // 아래로 내리기
+    if (type === "down" && selectedCategory !== categoryList.length - 1) {
+      const editItem = categoryList[selectedCategory];
+      categoryList.splice(selectedCategory, 1);
+      categoryList.splice(selectedCategory + 1, 0, editItem);
+
+      this.setState({
+        categoryList,
+        selectedCategory: selectedCategory + 1,
+      });
+    }
+  };
+
+  // 카테고리 삭제
+  deleteCategory = (idx) => {
+    const { categoryList } = this.state;
+
+    categoryList.splice(idx, 1);
+
+    this.setState({
+      categoryList,
+    });
+  };
+
+  // 수정 완료
+  handleSubmit = () => {
+    const { categoryList } = this.state;
+
+    for (let i = 0; i < categoryList.length; i++) {
+      categoryList[i].sorting_number = i + 1;
+    }
+
+    this.setState({
+      categoryList,
+    });
   };
 
   render() {
-    const {
-      category,
-      categoryList,
-      alignBy,
-      searchType,
-      searchWord,
-      totalCount,
-      itemCount,
-      pageNum,
-    } = this.state;
+    const { selectedCategory, categoryList, newItem } = this.state;
 
     return (
       <AdminLayout>
-        <div className="admin_section admin_post_list_wrapper">
+        <div className="admin_section admin_category_sort_wrapper">
           <div className="admin_content_title">카테고리 관리</div>
           <div className="admin_content">
-            {/* 컴플리 */}
-            <div className="admin_complicated_search_wrapper">
-              <div className="complicated_info_wrap">
-                <div className="complicated_info_div">
-                  <p>
-                    <em>총 포스트 수 : </em>
-                    {numberFormat(totalCount)}
-                  </p>
-                </div>
-                <Link href="/admin/post/add">
-                  <button className="admin_border_blue_btn">포스트 등록</button>
-                </Link>
-              </div>
-              <form
-                className="complicated_search_div"
-                onSubmit={this.handleSearch}
-              >
-                <div className="complicated_search_row">
-                  {/* 카테고리 */}
-                  <span className="search_label">카테고리 : </span>
-                  <select
-                    name="category"
-                    className="search_custom_input"
-                    onChange={this.setInput}
-                    value={category || ""}
-                    style={{ marginRight: 30 }}
-                  >
-                    {categoryList.map((el, idx) => (
-                      <option key={idx} value={el.value}>
-                        {el.text}
-                      </option>
-                    ))}
-                  </select>
-                  {/* 정렬 기준 */}
-                  <span className="search_label">정렬 : </span>
-                  <select
-                    name="alignBy"
-                    className="search_custom_input"
-                    onChange={this.setInput}
-                    value={alignBy || ""}
-                    style={{ marginRight: 30 }}
-                  >
-                    <option value="newest">최신 순</option>
-                    <option value="hits">조회수 순</option>
-                  </select>
-                  {/* 검색 기준 */}
-                  <span className="search_label">검색 기준 : </span>
-                  <select
-                    name="searchType"
-                    className="search_custom_input"
-                    onChange={this.setInput}
-                    value={searchType || ""}
-                    style={{ marginRight: 10 }}
-                  >
-                    <option value="title">제목</option>
-                    <option value="content">내용</option>
-                    <option value="">제목+내용</option>
-                  </select>
-                  <input
-                    name="searchWord"
-                    type="text"
-                    className="search_custom_input"
-                    style={{ width: 150, marginRight: 30 }}
-                    onChange={this.setInput}
-                    onKeyPress={(e) => this.enterPressed(e)}
-                    value={searchWord || ""}
-                  />
-                  {/* 체크박스 */}
-                  {/* <div className="search_custom_checkbox_div">
-                    <div
-                      className={`search_custom_checkbox ${
-                        this.state.subscribeEmail ? "true" : ""
-                      }`}
-                      onClick={() => this.handleCheckbox("subscribeEmail")}
-                      onKeyDown={() => this.handleCheckbox("subscribeEmail")}
-                    />
-                    <p>체크사항</p>
-                  </div> */}
-                  <input type="submit" value="검색" />
-                </div>
-              </form>
-              <div className="complicated_search_btn_div">
-                <div>
-                  <button
-                    className="admin_blue_btn"
-                    onClick={this.handleUserAllList}
-                    style={{ marginRight: 10 }}
-                  >
-                    전체목록
-                  </button>
-                </div>
-                <ItemCount
-                  itemCount={this.state.itemCount}
-                  handleItemCount={this.handleItemCount}
+            <div className="category_sort_wrap" ref={this.sortSection}>
+              {/* 탭 섹션 */}
+              <div className="tab_sect">
+                <button
+                  className="up_btn"
+                  aria-label="위로"
+                  onClick={() => this.handleReorder("up")}
+                  disabled={typeof selectedCategory !== "number"}
+                />
+                <button
+                  className="down_btn"
+                  aria-label="아래로"
+                  onClick={() => this.handleReorder("down")}
+                  disabled={typeof selectedCategory !== "number"}
                 />
               </div>
+
+              {/* 순서 변경 섹션 */}
+              <div className="reorder_sect">
+                <ul>
+                  <li className="table_head">
+                    <p>이름</p>
+                    <p>url</p>
+                    <p>관리</p>
+                  </li>
+                  {categoryList.map((el, idx) => (
+                    <li
+                      key={idx}
+                      className={`sort_row ${
+                        selectedCategory === idx ? "selected" : ""
+                      }`}
+                      onClick={() => this.selectCategory(idx)}
+                      onKeyDown={() => this.selectCategory(idx)}
+                    >
+                      <input
+                        type="text"
+                        onChange={(e) => this.setInput(e, idx, "category_name")}
+                        value={el.category_name}
+                      />
+                      <input
+                        type="text"
+                        onChange={(e) => this.setInput(e, idx, "url_name")}
+                        value={el.url_name}
+                      />
+                      <div className="delete_div">
+                        <img
+                          alt="삭제"
+                          src={xButton}
+                          onClick={() => this.deleteCategory(idx)}
+                          onKeyDown={() => this.deleteCategory(idx)}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* 카테고리 추가 섹션 */}
+              <div className="add_sect">
+                <div>
+                  <input
+                    onChange={(e) => this.setNewInput(e, "category_name")}
+                    value={newItem.category_name || ""}
+                  />
+                </div>
+                <div>
+                  <input
+                    onChange={(e) => this.setNewInput(e, "url_name")}
+                    value={newItem.url_name || ""}
+                  />
+                </div>
+                <div>
+                  <button onClick={this.addNewItem}>추가</button>
+                </div>
+              </div>
+
+              {/* 완료 버튼 섹션 */}
+              <div className="bottom_sect">
+                <button onClick={this.handleSubmit}>완료</button>
+              </div>
             </div>
-
-            <div className="post_unit_wrap" />
-
-            <Pagination
-              activePage={parseInt(pageNum)}
-              itemsCountPerPage={itemCount} // itemCount를 Pagination 컴포넌트에 props로 넘겨줍니다.
-              totalItemsCount={totalCount}
-              change={this.linkPage}
-            />
           </div>
         </div>
       </AdminLayout>

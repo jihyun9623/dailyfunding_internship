@@ -26,7 +26,7 @@ import TableToolbar from "@ckeditor/ckeditor5-table/src/tabletoolbar";
 import TextTransformation from "@ckeditor/ckeditor5-typing/src/texttransformation";
 import Indent from "@ckeditor/ckeditor5-indent/src/indent";
 import IndentBlock from "@ckeditor/ckeditor5-indent/src/indentblock";
-import SimpleUploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/SimpleUploadAdapter";
+import SimpleUploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter";
 import HorizontalLine from "@ckeditor/ckeditor5-horizontal-line/src/horizontalline";
 
 import * as constants from "constants.js";

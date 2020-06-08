@@ -7,7 +7,7 @@
 export const URL_BACK =
   process.env.NODE_ENV === "development"
     ? "http://192.168.0.6:9000"
-    : "http://blog.daily-funding.com";
+    : "http://blog.daily-funding.com:8000";
 // http://192.168.0.87:9000
 
 export const URL_FRONT =

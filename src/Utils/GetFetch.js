@@ -1,7 +1,10 @@
+import Router from "next/router";
+
+import swal from "sweetalert";
+// import download from "downloadjs";
+
 import * as constants from "constants.js";
 import store from "Store";
-import download from "downloadjs";
-import swal from "sweetalert";
 import { getToken } from "Store/Modules/token";
 
 const localStorageCheck = (key) => {
@@ -12,7 +15,7 @@ const localStorageCheck = (key) => {
   }
 };
 
-const alert = (text) => {
+const alert = (text, dontreturn) => {
   if (localStorageCheck("ACTK")) {
     localStorage.removeItem("ACTK");
     localStorage.removeItem("RFTK");
@@ -25,14 +28,16 @@ const alert = (text) => {
     text,
     button: "확인",
   }).then(() => {
-    window.location.href = "/login";
+    if (!dontreturn) {
+      Router.push("/");
+    }
   });
 };
 
 // GET fetch 함수입니다.
 const fetchOn = async (parameter, callback) => {
-  const token =
-    localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "";
+  const token = localStorage.getItem("ACTK") || "";
+
   await fetch(`${constants.URL_BACK}${parameter}`, {
     method: "GET",
     headers: token
@@ -51,9 +56,10 @@ const fetchOn = async (parameter, callback) => {
       } else if (response.message === "TOKEN_INVALID") {
         alert("비정상적인 로그인 방식입니다.");
       } else if (response.message === "TOKEN_EXPIRATION") {
-        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.");
+        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.", true);
       } else if (response.message === "ACCESS_TOKEN_NOT_EXIST") {
-        alert("로그인이 필요한 서비스입니다.");
+        // alert("로그인이 필요한 서비스입니다.");
+        // window.location.reload();
       } else {
         await callback(response);
       }
@@ -109,57 +115,57 @@ export const getFetch = async (parameter, { token: tokenStatus }, callback) => {
 };
 
 // 파일 다운로드 fetch 함수입니다.
-const downLoadOn = async (parameter, fileName, fileType, callback) => {
-  const token =
-    localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "";
-  await fetch(`${constants.URL_BACK}${parameter}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
-    },
-    responseType: "arraybuffer",
-  })
-    .then(async (response) => {
-      if (response.status === 200) {
-        response.blob().then(
-          (blob) => {
-            download(blob, `${fileName}`, `${fileType}`);
-          },
-          async () => {
-            await callback(response);
-          },
-        );
-      } else {
-        swal({
-          text: "다운로드에 실패했습니다.",
-          button: "확인",
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err, parameter);
-    });
-};
+// const downLoadOn = async (parameter, fileName, fileType, callback) => {
+//   const token =
+//     localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "";
+//   await fetch(`${constants.URL_BACK}${parameter}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: token,
+//     },
+//     responseType: "arraybuffer",
+//   })
+//     .then(async (response) => {
+//       if (response.status === 200) {
+//         response.blob().then(
+//           (blob) => {
+//             download(blob, `${fileName}`, `${fileType}`);
+//           },
+//           async () => {
+//             await callback(response);
+//           },
+//         );
+//       } else {
+//         swal({
+//           text: "다운로드에 실패했습니다.",
+//           button: "확인",
+//         });
+//       }
+//     })
+//     .catch((err) => {
+//       console.log(err, parameter);
+//     });
+// };
 
-export const getDownLoad = async (parameter, fileName, fileType, callback) => {
-  await store.dispatch(getToken()).then(async (tokenObj) => {
-    if (tokenObj.status === "get") {
-      await downLoadOn(parameter, fileName, fileType, callback);
-    } else if (
-      tokenObj.status === "refresh_loading" ||
-      tokenObj.status === "refresh_not_done"
-    ) {
-      const check = setInterval(() => {
-        const { fetching } = store.getState().reducer;
-        if (!fetching) {
-          downLoadOn(parameter, fileName, fileType, callback);
-          clearInterval(check);
-        }
-      }, 500);
-    }
-  });
-};
+// export const getDownLoad = async (parameter, fileName, fileType, callback) => {
+//   await store.dispatch(getToken()).then(async (tokenObj) => {
+//     if (tokenObj.status === "get") {
+//       await downLoadOn(parameter, fileName, fileType, callback);
+//     } else if (
+//       tokenObj.status === "refresh_loading" ||
+//       tokenObj.status === "refresh_not_done"
+//     ) {
+//       const check = setInterval(() => {
+//         const { fetching } = store.getState().reducer;
+//         if (!fetching) {
+//           downLoadOn(parameter, fileName, fileType, callback);
+//           clearInterval(check);
+//         }
+//       }, 500);
+//     }
+//   });
+// };
 
 // POST fetch 함수입니다.
 const postOn = async (parameter, bodyData, callback, resolve) => {
@@ -189,9 +195,16 @@ const postOn = async (parameter, bodyData, callback, resolve) => {
       } else if (response.message === "TOKEN_INVALID") {
         alert("비정상적인 로그인 방식입니다.");
       } else if (response.message === "TOKEN_EXPIRATION") {
-        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.");
+        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.", true);
       } else if (response.message === "ACCESS_TOKEN_NOT_EXIST") {
-        alert("로그인이 필요한 서비스입니다.");
+        // alert("로그인이 필요한 서비스입니다.");
+        if (localStorageCheck("ACTK")) {
+          localStorage.removeItem("ACTK");
+          localStorage.removeItem("RFTK");
+        } else {
+          sessionStorage.removeItem("ACTK");
+          sessionStorage.removeItem("RFTK");
+        }
       } else {
         await callback(response, resolve);
       }
@@ -257,7 +270,7 @@ export const postFetch = async (
   }
 };
 
-// POST fetch 함수입니다.
+// DELETE fetch 함수입니다.
 const deleteOn = async (parameter, bodyData, callback) => {
   const token =
     localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "";
@@ -285,9 +298,16 @@ const deleteOn = async (parameter, bodyData, callback) => {
       } else if (response.message === "TOKEN_INVALID") {
         alert("유효하지 않은 로그인 정보입니다. 다시 시도해주세요.");
       } else if (response.message === "TOKEN_EXPIRATION") {
-        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.");
+        alert("로그인 시한이 만료되었습니다. 다시 로그인해주세요.", true);
       } else if (response.message === "ACCESS_TOKEN_NOT_EXIST") {
-        alert("로그인이 필요한 서비스입니다.");
+        // alert("로그인이 필요한 서비스입니다.");
+        if (localStorageCheck("ACTK")) {
+          localStorage.removeItem("ACTK");
+          localStorage.removeItem("RFTK");
+        } else {
+          sessionStorage.removeItem("ACTK");
+          sessionStorage.removeItem("RFTK");
+        }
       } else {
         await callback(response);
       }
@@ -309,54 +329,6 @@ export const deleteFetch = async (parameter, bodyData, callback) => {
         const { fetching } = store.getState().reducer;
         if (!fetching) {
           deleteOn(parameter, bodyData, callback);
-          clearInterval(check);
-        }
-      }, 500);
-    }
-  });
-};
-
-const propmiseDownLoadOn = (parameter, fileName, fileType, resolve) => {
-  const token =
-    localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "";
-
-  fetch(`${constants.URL_BACK}${parameter}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
-    },
-    responseType: "arraybuffer",
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        response.blob().then((blob) => {
-          resolve(download(blob, `${fileName}`, `${fileType}`));
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err, parameter);
-    });
-};
-
-export const propmiseDownLoad = async (
-  parameter,
-  fileName,
-  fileType,
-  resolve,
-) => {
-  await store.dispatch(getToken()).then(async (tokenObj) => {
-    if (tokenObj.status === "get") {
-      propmiseDownLoadOn(parameter, fileName, fileType, resolve);
-    } else if (
-      tokenObj.status === "refresh_loading" ||
-      tokenObj.status === "refresh_not_done"
-    ) {
-      const check = setInterval(() => {
-        const { fetching } = store.getState().reducer;
-        if (!fetching) {
-          propmiseDownLoadOn(parameter, fileName, fileType, resolve);
           clearInterval(check);
         }
       }, 500);

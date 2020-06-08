@@ -10,6 +10,7 @@
           "@Components": "./src/Components",
           "@pages": "./src/pages",
           "@Style": "./src/Style",
+          "@Store": "./src/Store",
           "@Utils": "./src/Utils",
           "@Img": "./public/Img",
           "@constants": "./src/constants.js"

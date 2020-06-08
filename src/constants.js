@@ -5,33 +5,29 @@
 // 이렇게 설정한 후 constants.js 상에서의 주소를 변경해주면 자동으로 모든 곳에서 변경됩니다.
 
 export const URL_BACK =
-  process.env.BACKEND_HOST || "http://daily-funding.com:8000";
-// (process.env.REACT_APP_ENV === "local" && "http://localhost:8000") ||
-// (process.env.REACT_APP_ENV === "hj" && "http://192.168.0.6:8000") ||
-// (process.env.REACT_APP_ENV === "yh" && "http://192.168.0.109:8000") ||
-// (process.env.REACT_APP_ENV === "mh" && "http://192.168.0.46:8000") ||
-// (process.env.REACT_APP_ENV === "sy" && "http://192.168.0.49:8000") ||
-// (process.env.REACT_APP_ENV === "prod" && "http://daily-funding.com:8000") ||
-// (process.env.REACT_APP_ENV === "prod-test" &&
-//   "http://dev.daily-funding.com:8000") ||
-// "http://daily-funding.com:8000";
+  process.env.NODE_ENV === "development"
+    ? "http://192.168.0.6:9000"
+    : "http://blog.daily-funding.com";
+// http://192.168.0.87:9000
 
-export const URL_FRONT = process.env.FRONT_URL || "daily-funding.com";
-// (process.env.REACT_APP_ENV === "local" && "localhost") ||
-// (process.env.REACT_APP_ENV === "hj" && "localhost") ||
-// (process.env.REACT_APP_ENV === "yh" && "localhost") ||
-// (process.env.REACT_APP_ENV === "mh" && "localhost") ||
-// (process.env.REACT_APP_ENV === "sy" && "localhost") ||
-// (process.env.REACT_APP_ENV === "prod" && "daily-funding.com") ||
-// (process.env.REACT_APP_ENV === "prod-test" && "dev.daily-funding.com") ||
-// "daily-funding.com";
+export const URL_FRONT =
+  process.env.NODE_ENV === "development"
+    ? "localhost"
+    : "blog.daily-funding.com";
 
-// recaptcha 키입니다.
-// constants.RECAPTCHA_KEY 로 쓰시면 됩니다.
-export const RECAPTCHA_KEY = "6LfBQbAUAAAAANY8KXFw9R-dw7F7Mz9PMtUbZEQl";
+// 뉴스레터 신청 url.
+// production 일 땐 데일리펀딩으로 연결되어야 함 (데일리 블로그 아님)
+export const URL_NEWS =
+  process.env.NODE_ENV === "development"
+    ? "http://106.10.40.220"
+    : "https://www.daily-funding.com";
 
-// kakao 키입니다. 임시 키입니다.
-export const KAKAO_KEY = "afd76f2ce390290b91c1f9491b48061a";
+// 로그인 리다이렉트 url.
+// production 일 땐 데일리펀딩으로 연결되어야 함 (데일리 블로그 아님)
+export const URL_LOGIN =
+  process.env.NODE_ENV === "development"
+    ? "http://192.168.0.80"
+    : "https://www.daily-funding.com";
 
 // breakpoint 변수입니다. js 파일에서 직접 windowSize 를 받아와 미디어쿼리를 적용하는 경우
 // constants.BREAK_PC 와 같은 형식으로 끌어다 사용하면 됩니다.

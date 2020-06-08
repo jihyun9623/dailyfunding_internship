@@ -31,6 +31,9 @@
         height: 200px;
         border-radius: 6px;
         background-color: $theme-grey5;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
         margin-right: 20px;
         cursor: pointer;
       }
@@ -44,28 +47,60 @@
           justify-content: space-between;
           margin-bottom: 10px;
 
-          .category {
-            border-radius: 15px;
-            padding: 3px 8px;
+          .button_div {
+            display: flex;
+            align-items: center;
 
-            &.category_1 {
-              background-color: #d7f0ff;
-              color: #0081ff;
-            }
+            .category {
+              border-radius: 15px;
+              padding: 3px 8px;
+              margin-right: 8px;
 
-            &.category_2 {
-              background-color: #ffe6eb;
-              color: #ff3831;
-            }
+              &.category_1 {
+                background-color: #d7f0ff;
+                color: #0081ff;
+              }
 
-            &.category_3 {
-              background-color: #fce7c1;
-              color: #ff6600;
-            }
+              &.category_2 {
+                background-color: #ffe6eb;
+                color: #ff3831;
+              }
 
-            &.category_4 {
-              color: #4ebd74;
-              background-color: rgba(78, 189, 116, 0.25);
+              &.category_3 {
+                background-color: #fce7c1;
+                color: #ff6600;
+              }
+
+              &.category_4 {
+                color: #4ebd74;
+                background-color: rgba(78, 189, 116, 0.25);
+              }
+
+              &.category_5 {
+                background-color: #ecd9ef;
+                color: #9c27b0;
+              }
+
+              &.category_6 {
+                background-color: #c2e4e1;
+                color: #009688;
+              }
+
+              &.category_7 {
+                background-color: #d2d6eb;
+                color: #000f96;
+              }
+
+              &.category_8 {
+                background-color: #eaeaea;
+                color: #676767;
+              }
+
+              &.main_post {
+                border: 1px solid $theme-blue1;
+                color: $theme-blue1;
+                background-color: white;
+              }
             }
           }
 

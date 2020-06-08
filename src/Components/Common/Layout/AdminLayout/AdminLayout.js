@@ -1,4 +1,9 @@
+import Router, { withRouter } from "next/router";
+
+// import swal from "sweetalert";
+
 import AdminMenu from "Components/Common/AdminMenu/AdminMenu";
+import { getFetch } from "Utils/GetFetch";
 
 import "./AdminLayout.scss";
 
@@ -8,10 +13,22 @@ class AdminLayout extends React.Component {
 
     this.state = {
       menuOn: true,
-      // adminCheck: false,
+      adminCheck: false,
       removeMinWidth: props.removeMinWidth,
     };
   }
+
+  componentDidMount() {
+    getFetch("/users/admin-check", { token: true }, this.adminCheckRes);
+  }
+
+  adminCheckRes = (response) => {
+    if (response.message === "ADMIN_CHECK_SUCCESS") {
+      this.setState({ adminCheck: true });
+    } else if (response.message === "ACCESS_DENIED") {
+      Router.push("/");
+    }
+  };
 
   handleClickMenu = () => {
     if (this.state.menuOn === true) {
@@ -26,8 +43,7 @@ class AdminLayout extends React.Component {
   };
 
   render() {
-    // return !this.state.adminCheck ? null : (
-    return (
+    return !this.state.adminCheck ? null : (
       <div
         className="admin_wrapper"
         style={
@@ -49,4 +65,4 @@ class AdminLayout extends React.Component {
   }
 }
 
-export default AdminLayout;
+export default withRouter(AdminLayout);

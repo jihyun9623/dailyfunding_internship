@@ -26,10 +26,14 @@ import TableToolbar from "@ckeditor/ckeditor5-table/src/tabletoolbar";
 import TextTransformation from "@ckeditor/ckeditor5-typing/src/texttransformation";
 import Indent from "@ckeditor/ckeditor5-indent/src/indent";
 import IndentBlock from "@ckeditor/ckeditor5-indent/src/indentblock";
-import Base64UploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter";
+import SimpleUploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/SimpleUploadAdapter";
 import HorizontalLine from "@ckeditor/ckeditor5-horizontal-line/src/horizontalline";
 
+import * as constants from "constants.js";
+
 import "./Editor.scss";
+
+const token = localStorage.getItem("ACTK") || "";
 
 const colorArray = [
   { color: "hsl(6, 54%, 95%)", label: " " },
@@ -224,7 +228,7 @@ class Editor extends React.Component {
     return (
       <div>
         <CKEditor
-          data=""
+          data={this.props.content || ""}
           onChange={this.onEditorChange}
           config={{
             plugins: [
@@ -251,7 +255,7 @@ class Editor extends React.Component {
               ImageUpload,
               ImageResize,
               ImageCaption,
-              Base64UploadAdapter,
+              SimpleUploadAdapter,
               Table,
               TableToolbar,
               TextTransformation,
@@ -266,7 +270,6 @@ class Editor extends React.Component {
               "strikethrough",
               "|",
               "fontFamily",
-              // "fontSize",
               "fontColor",
               "fontBackgroundColor",
               "|",
@@ -316,17 +319,15 @@ class Editor extends React.Component {
             },
             fontFamily: {
               options: [
-                "NanumSquare",
-                "Spoqa Han Sans",
                 "Noto Sans KR",
                 "Open Sans",
+                "Spoqa Han Sans",
+                "NanumGothic",
+                "NanumSquare",
                 "Gothicssi",
                 "SoftGothicssi",
               ],
             },
-            // fontSize: {
-            //   options: [16, 19, 22, 24, 28, 30, 34, 38],
-            // },
             alignment: {
               options: ["justify", "left", "center", "right"],
             },
@@ -334,7 +335,8 @@ class Editor extends React.Component {
               contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
             },
             image: {
-              resizeUnit: "px",
+              // 이걸 활성화시키면 resize 시 처음 설정한 픽셀이 고정됩니다.
+              // resizeUnit: "px",
               toolbar: [
                 "imageStyle:alignLeft",
                 "imageStyle:full",
@@ -343,6 +345,10 @@ class Editor extends React.Component {
                 "imageTextAlternative",
               ],
               styles: ["full", "alignLeft", "alignRight"],
+            },
+            // 비디오 preview 가 가능하도록 설정
+            mediaEmbed: {
+              previewsInData: true,
             },
             typing: {
               transformations: {
@@ -367,6 +373,13 @@ class Editor extends React.Component {
               columns: 10,
               documentColors: 200,
               colors: colorArray,
+            },
+            simpleUpload: {
+              uploadUrl: `${constants.URL_BACK}/files/ck-editor`,
+              headers: {
+                //   "X-CSRF-TOKEN": "CSFR-Token",
+                Authorization: token,
+              },
             },
           }}
           editor={ClassicEditor}

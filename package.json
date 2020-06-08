@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "dev": "cross-env next dev",
+    "build": "cross-env next build",
+    "start": "cross-env next start -p 80"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-alignment": "^19.0.0",
@@ -42,6 +42,7 @@
     "moment-timezone": "^0.5.26",
     "next": "^9.3.5",
     "next-images": "^1.4.0",
+    "next-redux-wrapper": "^6.0.0",
     "node-sass": "^4.12.0",
     "react": "^16.13.1",
     "react-alice-carousel": "^1.19.0",

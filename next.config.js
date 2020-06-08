@@ -32,6 +32,7 @@ module.exports = withCSS(
           "@Components": path.join(__dirname, "src", "Components"),
           "@pages": path.join(__dirname, "src", "pages"),
           "@Style": path.join(__dirname, "src", "Style"),
+          "@Store": path.join(__dirname, "src", "Store"),
           "@Utils": path.join(__dirname, "src", "Utils"),
           "@Img": path.join(__dirname, "public", "Img"),
           "@constants": path.join(__dirname, "constants.js"),
@@ -92,10 +93,10 @@ module.exports = withCSS(
 
       return config;
     },
-    env: {
-      // Reference a variable that was defined in the .env file and make it available at Build Time
-      FRONT_URL: process.env.FRONT_URL,
-      BACKEND_HOST: process.env.BACKEND_HOST,
-    },
+    // env: {
+    // Reference a variable that was defined in the .env file and make it available at Build Time
+    //   FRONT_URL: process.env.FRONT_URL,
+    //   BACKEND_HOST: process.env.BACKEND_HOST,
+    // },
   }),
 );

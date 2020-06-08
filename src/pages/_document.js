@@ -23,6 +23,12 @@ export default class DailyDocument extends Document {
             rel="stylesheet"
             type="text/css"
           />
+          {/* 나눔 고딕 서체 import */}
+          <link
+            href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap"
+            rel="stylesheet"
+            type="text/css"
+          />
           {/* Roboto 서체 import */}
           <link
             href="https://fonts.googleapis.com/css?family=Roboto"

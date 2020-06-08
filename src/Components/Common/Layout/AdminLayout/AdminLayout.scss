@@ -623,7 +623,7 @@
 
       .search_custom_checkbox.true {
         border: 1px solid $theme-blue1;
-        background-image: url("/Img/check_blue.png");
+        background-image: url("/Img/check_blue.svg");
         background-size: 15px;
         background-position: center;
         background-repeat: no-repeat;
@@ -704,6 +704,7 @@
       }
 
       button {
+        background-color: $theme-blue1;
         height: 25px;
         padding: 3px 8px;
         margin: 0;

@@ -44,10 +44,6 @@ section.comment_wrap {
       padding-bottom: 6px;
       user-select: none;
 
-      > div > .comment_item {
-        border-bottom: 1px solid #dddddd;
-      }
-
       .comment_item {
         position: relative;
         padding: 30.5px 0;
@@ -189,6 +185,26 @@ section.comment_wrap {
             font-size: 15px;
             line-height: 25px;
             letter-spacing: -0.45px;
+          }
+
+          span {
+            font-weight: 500;
+            margin-right: 5px;
+
+            img {
+              width: 26px;
+              margin-right: 5px;
+              margin-bottom: 5px;
+              vertical-align: middle;
+
+              @media #{$pad} {
+                width: 24px;
+              }
+
+              @media only screen and (max-width: 660px) {
+                width: 20px;
+              }
+            }
           }
         }
       }

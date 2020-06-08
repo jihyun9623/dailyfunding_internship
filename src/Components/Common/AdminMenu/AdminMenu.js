@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { withRouter } from "next/router";
 
-// import { getFetch, postFetch } from "Utils/GetFetch";
+import { postFetch } from "Utils/GetFetch";
 import { getParams } from "Utils/QueryString";
 import * as constants from "constants.js";
 
@@ -56,7 +56,7 @@ class AdminMenu extends React.PureComponent {
         ? `?${document.referrer.split("?")[1]}`
         : "";
     } else if (
-      // 리액트 홈페이지는 SPA 형식이라 document.referrer 미작동
+      // Next 로 만든 웹페이지는 SPA 형식이라 document.referrer 미작동
       // 따라서 홈페이지 내 트래킹은 session storage 이용
       document.referrer === "" ||
       document.domain === constants.URL_FRONT
@@ -80,13 +80,15 @@ class AdminMenu extends React.PureComponent {
       page_parameter: getParams(this.props.router.asPath),
       referrer_url: refUrl,
       referrer_parameter: refPar,
-      from_site: "",
     });
 
-    // postFetch(`/access_logs`, { token: "any" }, data, () => {});
+    postFetch(`/access_logs`, { token: "any" }, data, () => {});
 
     sessionStorage.setItem("current_url", this.props.router.pathname);
-    sessionStorage.setItem("current_par", getParams(this.props.router.asPath));
+    sessionStorage.setItem(
+      "current_par",
+      getParams(this.props.router.asPath) || "",
+    );
 
     // 현재 메뉴로 스크롤
     if (this.scrollDiv.current) {
@@ -122,14 +124,14 @@ class AdminMenu extends React.PureComponent {
     }
   };
 
-  handleLinkLogout = () => {
-    localStorage.removeItem("ACTK");
-    localStorage.removeItem("RFTK");
-    sessionStorage.removeItem("ACTK");
-    sessionStorage.removeItem("RFTK");
+  // handleLinkLogout = () => {
+  //   localStorage.removeItem("ACTK");
+  //   localStorage.removeItem("RFTK");
+  //   sessionStorage.removeItem("ACTK");
+  //   sessionStorage.removeItem("RFTK");
 
-    this.props.history.push("/");
-  };
+  //   this.props.history.push("/");
+  // };
 
   handleMenuArr = (thisArray, num) => {
     if (thisArray) {
@@ -190,13 +192,13 @@ class AdminMenu extends React.PureComponent {
             <Link href="/">
               <p className="top_link">홈페이지</p>
             </Link>
-            <p
+            {/* <p
               className="top_link"
               onClick={this.handleLinkLogout}
               onKeyDown={this.handleLinkLogout}
             >
               로그아웃
-            </p>
+            </p> */}
           </div>
         </div>
 

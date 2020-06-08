@@ -1,9 +1,15 @@
 import Link from "next/link";
-// import Router from "next/router";
+import Router, { withRouter } from "next/router";
+import Head from "next/head";
 
 import AliceCarousel from "react-alice-carousel";
+import * as moment from "moment";
 
+import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import Footer from "Components/Common/Footer/Footer";
+import { getFetch } from "Utils/GetFetch";
+import { queryToObject, objectToQuerystring } from "Utils/QueryString";
+import * as constants from "constants.js";
 
 import Logo from "@Img/big_logo_white.png";
 import CircleArrow from "@Img/circle_right.png";
@@ -13,60 +19,190 @@ import DownArrow from "@Img/down.png";
 
 import "./main.scss";
 
-const categoryList = [
-  {
-    category_id: undefined,
-    category_name: "전체보기",
-  },
-  {
-    category_id: 1,
-    category_name: "기획 아카이브",
-  },
-  {
-    category_id: 2,
-    category_name: "데일리 소식",
-  },
-  {
-    category_id: 3,
-    category_name: "데일리언의 수다",
-  },
-  {
-    category_id: 4,
-    category_name: "투자자 인터뷰",
-  },
-  {
-    category_id: 5,
-    category_name: "데일리 룩",
-  },
-];
-
-const sampleData1 = [
-  {
-    id: 1,
-    category: "기획 아카이브",
-    title: "크라우드펀딩이 하고 싶은 당신에게 말합니다",
-    subtitle: "by 데일리언 정창언",
-    date: "2020년 2월 21일",
-    description:
-      "제가 전공했던 농업경제학은 농산업과 관련된 다양한 분야를 다루는데, 그중에 제일 기초는 경제학이었어요. 게다가 당시는 금융산업이 워낙 주목받던 시기였죠. 카드 사태 이후 국내 경기가 회복되던 와중에 서브프라임 모기지 사태로 촉발된 글로벌 금융위기가 발생했는데, 저 역시 시장의 변동폭도 매우 컸고 언론과 책을",
-  },
-  {
-    id: 2,
-    category: "기획 아카이브",
-    title: "게임과 투자의 공통점은 이길 확률이 높은 쪽에 배팅하는거죠",
-    subtitle: "by 20대 프로게이머, 진현성님",
-    date: "2020년 2월 22일",
-    description:
-      "제가 전공했던 농업경제학은 농산업과 관련된 다양한 분야를 다루는데, 그중에 제일 기초는 경제학이었어요. 게다가 당시는 금융산업이 워낙 주목받던 시기였죠. 카드 사태 이후 국내 경기가 회복되던 와중에 서브프라임 모기지 사태로 촉발된 글로벌 금융위기가 발생했는데, 저 역시 시장의 변동폭도 매우 컸고 언론과 책을",
-  },
-];
-
 class Main extends React.Component {
-  constructor() {
-    super();
+  // getServerSideProps 로 변경 예정
+  static async getInitialProps() {
+    // 포스트 정보 prefetch
+    let res;
 
-    this.state = {};
+    await fetch(`${constants.URL_BACK}/posts/list/main`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.post_list) {
+          res = response.post_list;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    if (res && res.length !== 0) {
+      // 메인 포스트가 존재할 때는 page Head 에 첫 포스트 정보 삽입
+      return {
+        mainPostList: res,
+        mainPostTitle: res[0].title,
+        mainPostDescription: res[0].description,
+        mainPostGuid: res[0].main_image_guid,
+      };
+    } else {
+      // 메인 포스트가 존재하지 않을 때는 '데일리 인사이트' 타이틀과 로고 이미지 삽입
+      return {
+        mainPostList: [],
+        mainPostTitle: "데일리 인사이트",
+        mainPostDescription: "",
+        mainPostGuid: undefined,
+      };
+    }
   }
+
+  state = {
+    admin: false,
+    windowSize: 0,
+    categoryId:
+      Number(queryToObject(this.props.router.asPath).category_id) || "",
+    categoryList: [],
+    postList: [],
+    pageNum: 1,
+  };
+
+  componentDidMount = () => {
+    // 관리자인지 체크
+    getFetch("/users/admin-check", { token: "any" }, this.adminCheckRes);
+
+    // 카테고리 리스트
+    getFetch(
+      "/categories/posts/list",
+      { token: "any" },
+      this.getCategoryListRes,
+    );
+
+    // 상단 노출 포스트 리스트
+    // this.getMainPostList();
+
+    // 포스트 리스트
+    this.getPostList();
+
+    window.addEventListener("resize", this.handleWindowResize);
+
+    this.setState({
+      windowSize: window.innerWidth,
+    });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleWindowResize);
+  }
+
+  handleWindowResize = () => {
+    this.setState({
+      windowSize: window.innerWidth,
+    });
+  };
+
+  adminCheckRes = (response) => {
+    if (response.message === "ADMIN_CHECK_SUCCESS") {
+      this.setState({ admin: true });
+    }
+  };
+
+  getCategoryListRes = (res) => {
+    if (res.category_list) {
+      this.setState({
+        categoryList: res.category_list,
+      });
+    }
+  };
+
+  // 상단 노출 포스트 리스트
+  // getMainPostList = () => {
+  //   getFetch("/posts/list/main", { token: "any" }, this.getMainPostListRes);
+  // };
+
+  // getMainPostListRes = (res) => {
+  //   if (res.post_list) {
+  //     this.setState({
+  //       mainPostList: res.post_list,
+  //     });
+  //   }
+  // };
+
+  // 포스트 리스트
+  getPostList = () => {
+    const { pageNum, categoryId } = this.state;
+
+    const params = {};
+    params.page_num = pageNum;
+    categoryId && (params.category_id = categoryId);
+
+    getFetch(
+      `/posts/list${objectToQuerystring(params)}`,
+      { token: "any" },
+      this.getPostListRes,
+    );
+  };
+
+  getPostListRes = (res) => {
+    if (res.post_list) {
+      const arr1 = [...this.state.postList];
+      const arr2 = arr1.concat(res.post_list);
+
+      this.setState(
+        {
+          postList: arr2,
+          totalCount: res.total_count,
+        },
+        () => {
+          const { totalCount, pageNum } = this.state;
+
+          if (totalCount - 6 * pageNum > 0) {
+            this.setState({
+              moreBtnStatus: true,
+            });
+          } else {
+            this.setState({
+              moreBtnStatus: false,
+            });
+          }
+        },
+      );
+    }
+  };
+
+  // 카테고리 선택
+  selectCategory = (id) => {
+    this.setState(
+      {
+        postList: [],
+        categoryId: id,
+        pageNum: 1,
+      },
+      () => {
+        // shallow routing 을 이용해 쿼리스트링 변경해주기
+        if (this.state.categoryId) {
+          Router.push(`/?category_id=${id}`, undefined, {
+            shallow: true,
+          }).then(() => this.getPostList());
+        } else {
+          Router.push("/").then(() => this.getPostList());
+        }
+      },
+    );
+  };
+
+  // 'more' 버튼 (더보기 기능)
+  addPage = () => {
+    this.setState(
+      (prevState) => ({
+        pageNum: prevState.pageNum + 1,
+      }),
+      () => this.getPostList(),
+    );
+  };
 
   // article title 이 몇 줄인지 세는 함수
   // countLines = (id) => {
@@ -79,101 +215,187 @@ class Main extends React.Component {
   // };
 
   render() {
-    const { selectedCategory } = this.state;
+    const {
+      mainPostList,
+      mainPostTitle,
+      mainPostDescription,
+      mainPostGuid,
+    } = this.props;
+
+    const {
+      windowSize,
+      admin,
+      categoryList,
+      categoryId,
+      postList,
+      moreBtnStatus,
+    } = this.state;
 
     return (
-      <div className="dailyblog_main_wrapper">
-        <header className="top_div">
-          <img alt="데일리 인사이트" src={Logo} />
-          <a href="https://www.daily-funding.com/">
-            <p>
-              <span>데일리펀딩 바로가기</span>
-              <img alt="바로가기" src={CircleArrow} />
-            </p>
-          </a>
-        </header>
+      <MainLayout>
+        <div className="dailyblog_main_wrapper">
+          {/* dynamic meta tag */}
+          {/* 메인 포스트의 첫 포스트가 기준이 됩니다. */}
+          <Head>
+            <title>{mainPostTitle}</title>
+            <meta id="og-type" property="og:type" content="website" />
+            <meta id="og-title" property="og:title" content={mainPostTitle} />
+            <meta property="og:description" content={mainPostDescription} />
+            <meta
+              property="og:image"
+              content={
+                mainPostGuid
+                  ? `${constants.URL_BACK}/files?guid=${mainPostGuid}`
+                  : "Img/sns_logo.png"
+              }
+            />
+          </Head>
 
-        <section className="carousel_wrap">
-          <AliceCarousel
-            buttonsDisabled
-            duration={500}
-            ref={(el) => (this.Carousel = el)}
-          >
-            {sampleData1.map((el, idx) => (
-              <div key={idx} className="carousel_item">
-                <div className="carousel_cover">
-                  <Link href={`/post?id=${el.id}`}>
-                    <div className="center_div">
-                      <p className="category_badge">{el.category}</p>
-                      <p className="title">{el.title}</p>
-                      <p className="subtitle">{el.subtitle}</p>
+          <header className="top_div">
+            <img alt="데일리 인사이트 - 데일리펀딩 블로그" src={Logo} />
+            <div>
+              <a
+                href="https://www.daily-funding.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <p className="link_to_dailyfunding">
+                  <span>데일리펀딩 바로가기</span>
+                  <img alt="바로가기" src={CircleArrow} />
+                </p>
+              </a>
+              {admin && (
+                <Link href="/admin">
+                  <button className="link_to_admin">관리자</button>
+                </Link>
+              )}
+            </div>
+          </header>
+
+          <section className="carousel_wrap">
+            {mainPostList && mainPostList.length > 0 && windowSize !== 0 && (
+              <AliceCarousel
+                buttonsDisabled
+                duration={500}
+                ref={(el) => (this.Carousel = el)}
+              >
+                {mainPostList.map((el, idx) => {
+                  return (
+                    <div
+                      key={idx}
+                      className="carousel_item"
+                      style={{
+                        backgroundImage:
+                          windowSize <= 768
+                            ? windowSize <= 414
+                              ? `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=550)`
+                              : `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=900)`
+                            : `url(${constants.URL_BACK}/files?guid=${el.main_image_guid})`,
+                      }}
+                    >
+                      <div className="black_cover" />
+                      <div className="carousel_cover">
+                        <Link href={`/post?post_id=${el.post_id}`}>
+                          <div className="center_div">
+                            <p className="category_badge">{el.category_name}</p>
+                            <p className="title">{el.title}</p>
+                            <p className="subtitle">{el.subtitle}</p>
+                          </div>
+                        </Link>
+                        <div className="bottom_div">
+                          {el.created_at
+                            ? moment(el.created_at).format("YYYY년 M월 D일")
+                            : ""}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </AliceCarousel>
+            )}
+            <button
+              className="carousel_left_btn"
+              onClick={() => this.Carousel.slidePrev()}
+            >
+              <img alt="왼쪽으로" src={CarouselLeft} />
+            </button>
+            <button
+              className="carousel_right_btn"
+              onClick={() => this.Carousel.slideNext()}
+            >
+              <img alt="오른쪽으로" src={CarouselRight} />
+            </button>
+          </section>
+
+          <section className="articles_list_wrap">
+            <div className="category_div">
+              <div
+                className={`category_badge ${!categoryId ? "active" : ""}`}
+                onClick={() => this.selectCategory(undefined)}
+                onKeyDown={() => this.selectCategory(undefined)}
+              >
+                전체보기
+              </div>
+              {categoryList.map((el, idx) => (
+                <div
+                  key={idx}
+                  className={`category_badge ${
+                    el.id === categoryId ? "active" : ""
+                  }`}
+                  onClick={() => this.selectCategory(el.id)}
+                  onKeyDown={() => this.selectCategory(el.id)}
+                >
+                  {el.category_name}
+                </div>
+              ))}
+            </div>
+
+            <div className="articles_list_div">
+              {postList.map((el, idx) => (
+                <div key={idx} className="article_item">
+                  <Link href={`/post?post_id=${el.post_id}`}>
+                    <div className="picture_div">
+                      <div
+                        className="picture"
+                        style={{
+                          backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=800)`,
+                        }}
+                      />
                     </div>
                   </Link>
-                  <div className="bottom_div">{el.date}</div>
+                  <div className="info_div">
+                    <div className="category_badge">{el.category_name}</div>
+                    <Link href={`/post?post_id=${el.post_id}`}>
+                      <p id={`content${el.post_id}`} className="title">
+                        {el.title}
+                      </p>
+                    </Link>
+                    <p className="description">{el.description}</p>
+                    <Link href={`/post?post_id=${el.post_id}`}>
+                      <p className="item_more_btn">MORE {">"}</p>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </AliceCarousel>
-          <button
-            className="carousel_left_btn"
-            onClick={() => this.Carousel.slidePrev()}
-          >
-            <img alt="왼쪽으로" src={CarouselLeft} />
-          </button>
-          <button
-            className="carousel_right_btn"
-            onClick={() => this.Carousel.slideNext()}
-          >
-            <img alt="오른쪽으로" src={CarouselRight} />
-          </button>
-        </section>
+              ))}
+            </div>
 
-        <section className="articles_list_wrap">
-          <div className="category_div">
-            {categoryList.map((el, idx) => (
+            {moreBtnStatus && (
               <div
-                key={idx}
-                className={`category_badge ${
-                  el.category_id === selectedCategory ? "active" : ""
-                }`}
+                className="more_btn_div"
+                onClick={this.addPage}
+                onKeyDown={this.addPage}
               >
-                {el.category_name}
+                <p>MORE</p>
+                <img alt="더보기" src={DownArrow} />
               </div>
-            ))}
-          </div>
+            )}
+          </section>
 
-          <div className="articles_list_div">
-            {sampleData1.map((el, idx) => (
-              <div key={idx} className="article_item">
-                <Link href={`/post?id=${el.id}`}>
-                  <div className="picture_div" />
-                </Link>
-                <div className="info_div">
-                  <div className="category_badge">{el.category}</div>
-                  <Link href={`/post?id=${el.id}`}>
-                    <p id={`content${el.id}`} className="title">
-                      {el.title}
-                    </p>
-                  </Link>
-                  <p className="description">{el.description}</p>
-                  <Link href={`/post?id=${el.id}`}>
-                    <p className="item_more_btn">MORE {">"}</p>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="more_btn_div">
-            <p>MORE</p>
-            <img alt="더보기" src={DownArrow} />
-          </div>
-        </section>
-
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </MainLayout>
     );
   }
 }
 
-export default Main;
+export default withRouter(Main);

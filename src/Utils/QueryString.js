@@ -1,6 +1,10 @@
 // querystring만 반환하는 함수
 export const getParams = (str) => {
-  return `?${str.split("?")[1]}`;
+  if (str.split("?").length === 1) {
+    return "";
+  } else {
+    return `?${str.split("?")[1]}`;
+  }
 };
 
 // querystring에 있는 문자열을 객체화해서 반환해주는 함수

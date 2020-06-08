@@ -1,87 +1,119 @@
 import Link from "next/link";
+import Router, { withRouter } from "next/router";
+
+import swal from "sweetalert";
+import * as moment from "moment";
 
 import AdminLayout from "Components/Common/Layout/AdminLayout/AdminLayout";
 import ItemCount from "Components/Common/ItemCount/ItemCount";
 import Pagination from "Components/Common/Pagination/Pagination";
 import { numberFormat } from "Utils/Number";
+import { getFetch, deleteFetch } from "Utils/GetFetch";
+import { queryToObject, objectToQuerystring } from "Utils/QueryString";
+import * as constants from "constants.js";
 
 import Eye from "@Img/eye_icon.svg";
 import "./post.scss";
 
-const des =
-  "어쩌구 저쩌구 샘플데이터 description 포스트설명 우갸갸갸 집보내주세요 테스팅 테스팅 네네 알겠습니다~~~ 어쩌구 저쩌구 샘플데이터 description 포스트설명 우갸갸갸 집보내주세요 테스팅 테스팅 네네 알겠습니다~~~ 어쩌구 저쩌구 샘플데이터 description 포스트설명 우갸갸갸 집보내주세요 테스팅 테스팅 네네 알겠습니다~~~ 어쩌구 저쩌구 샘플데이터 description 포스트설명 우갸갸갸 집보내주세요 테스팅 테스팅 네네 알겠습니다~~~ 어쩌구 저쩌구 샘플데이터 description 포스트설명 우갸갸갸 집보내주세요 테스팅 테스팅 네네 알겠습니다~~~";
-
 class PostList extends React.Component {
-  state = {
-    itemCount: 20,
-    pageNum: 1,
-    category: "total",
-    categoryList: [
-      {
-        text: "전체",
-        value: "total",
-      },
-      {
-        text: "데일리언",
-        value: "dailian",
-      },
-      {
-        text: "개발",
-        value: "development",
-      },
-      {
-        text: "꿀팁",
-        value: "honeytip",
-      },
-      {
-        text: "정보",
-        value: "information",
-      },
-    ],
-    alignBy: "newest",
-    searchType: "title",
-    postList: [
-      {
-        id: 1,
-        title: "첫번째 포스트 제목",
-        description: `첫번째 포스트 설명${des}`,
-        category: "데일리언",
-        hits: 139,
-        date: "2020-01-18",
-      },
-      {
-        id: 2,
-        title: "두번째 포스트 제목",
-        description: `두번째 포스트 설명${des}`,
-        category: "개발",
-        hits: 150,
-        date: "2020-01-18",
-      },
-      {
-        id: 3,
-        title: "세번째 포스트 제목",
-        description: `세번째 포스트 설명${des}`,
-        category: "꿀팁",
-        hits: 70,
-        date: "2020-01-18",
-      },
-      {
-        id: 4,
-        title: "네번째 포스트 제목",
-        description: `네번째 포스트 설명${des}`,
-        category: "정보",
-        hits: 110,
-        date: "2020-01-18",
-      },
-    ],
-  };
+  constructor(props) {
+    super(props);
+
+    const queryObj = queryToObject(props.router.asPath);
+
+    this.state = {
+      itemCount: 15,
+      pageNum: 1,
+      categoryId: Number(queryObj.category_id) || "",
+      alignBy: queryObj.sorting_option || "new",
+      searchType: queryObj.search_option || "",
+      searchWord: queryObj.search ? decodeURIComponent(queryObj.search) : "",
+      categoryList: [],
+      postList: [],
+    };
+  }
 
   componentDidMount = () => {
     this.getPostList();
+
+    // 카테고리 리스트
+    getFetch(
+      "/categories/posts/list/admin",
+      { token: true },
+      this.getCategoryListRes,
+    );
   };
 
+  getCategoryListRes = (res) => {
+    if (res.category_list) {
+      this.setState({
+        categoryList: res.category_list,
+      });
+    }
+  };
+
+  // 포스트 리스트
   getPostList = () => {
-    console.log(1);
+    const {
+      itemCount,
+      pageNum,
+      categoryId,
+      searchType,
+      searchWord,
+      alignBy,
+    } = this.state;
+    const params = {};
+
+    if (!searchType && searchWord) {
+      swal({
+        text: "검색 기준을 선택해주세요.",
+        button: "확인",
+      });
+    } else if (searchType && !searchWord) {
+      swal({
+        text: "검색어를 입력해주세요.",
+        button: "확인",
+      });
+    } else {
+      itemCount !== 15 && (params.item_count = itemCount);
+      pageNum !== 1 && (params.page_num = pageNum);
+      categoryId && (params.category_id = categoryId);
+      searchType && (params.search_option = searchType);
+      searchWord && (params.search = searchWord);
+      alignBy !== "new" && (params.sorting_option = alignBy);
+
+      Router.push(`/admin/post${objectToQuerystring(params)}`);
+
+      getFetch(
+        `/posts/list/admin${objectToQuerystring(params)}`,
+        { token: true },
+        this.getPostListRes,
+      );
+    }
+  };
+
+  getPostListRes = (res) => {
+    if (res.message === "CATEGORY_DOES_NOT_EXIST") {
+      swal({
+        text: "존재하지 않는 카테고리입니다.",
+        button: "확인",
+      });
+    } else if (res.message === "WRONG_SEARCH_OPTION") {
+      swal({
+        text: "검색 옵션을 잘못 입력하셨습니다.",
+        button: "확인",
+      });
+    } else if (res.message === "WRONG_SORTING_OPTION") {
+      swal({
+        text: "정렬 옵션을 선택해주세요.",
+        button: "확인",
+      });
+    } else if (res.post_list) {
+      this.setState({
+        postList: res.post_list,
+        totalCount: res.total_count,
+      });
+    }
   };
 
   handleItemCount = (num) => {
@@ -100,6 +132,20 @@ class PostList extends React.Component {
     });
   };
 
+  handleReset = () => {
+    this.setState(
+      {
+        pageNum: 1,
+        itemCount: 15,
+        categoryId: "",
+        searchType: "",
+        searchWord: "",
+        alignBy: "new",
+      },
+      () => this.getPostList(),
+    );
+  };
+
   handleSearch = () => {
     this.setState(
       {
@@ -107,6 +153,13 @@ class PostList extends React.Component {
       },
       () => this.getPostList(),
     );
+  };
+
+  enterPressed = (e) => {
+    const code = e.keyCode || e.which;
+    if (code === 13) {
+      this.getPostList();
+    }
   };
 
   linkPage = (num) => {
@@ -118,9 +171,36 @@ class PostList extends React.Component {
     );
   };
 
+  // 포스트 삭제
+  deletePost = (postId) => {
+    swal({
+      text: "해당 포스트를 삭제하시겠습니까?",
+      buttons: ["취소", "확인"],
+    }).then((isTrue) => {
+      if (isTrue) {
+        deleteFetch(
+          `/posts/admin`,
+          JSON.stringify({ id: postId }),
+          this.deletePostRes,
+        );
+      }
+    });
+  };
+
+  deletePostRes = (res) => {
+    if (res.message === "POST_DOES_NOT_EXIST") {
+      swal({
+        text: "존재하지 않는 포스트입니다.",
+        button: "확인",
+      }).then(() => this.getPostList());
+    } else if (res.message === "DELETE_SUCCESS") {
+      this.getPostList();
+    }
+  };
+
   render() {
     const {
-      category,
+      categoryId,
       categoryList,
       alignBy,
       searchType,
@@ -149,23 +229,21 @@ class PostList extends React.Component {
                   <button className="admin_border_blue_btn">포스트 등록</button>
                 </Link>
               </div>
-              <form
-                className="complicated_search_div"
-                onSubmit={this.handleSearch}
-              >
+              <div className="complicated_search_div">
                 <div className="complicated_search_row">
                   {/* 카테고리 */}
                   <span className="search_label">카테고리 : </span>
                   <select
-                    name="category"
+                    name="categoryId"
                     className="search_custom_input"
                     onChange={this.setInput}
-                    value={category || ""}
+                    value={categoryId || ""}
                     style={{ marginRight: 30 }}
                   >
+                    <option value="">선택해주세요</option>
                     {categoryList.map((el, idx) => (
-                      <option key={idx} value={el.value}>
-                        {el.text}
+                      <option key={idx} value={el.id}>
+                        {el.category_name}
                       </option>
                     ))}
                   </select>
@@ -178,8 +256,9 @@ class PostList extends React.Component {
                     value={alignBy || ""}
                     style={{ marginRight: 30 }}
                   >
-                    <option value="newest">최신 순</option>
-                    <option value="hits">조회수 순</option>
+                    <option value="new">최신 순</option>
+                    <option value="old">오래된 순</option>
+                    <option value="count">조회수 순</option>
                   </select>
                   {/* 검색 기준 */}
                   <span className="search_label">검색 기준 : </span>
@@ -190,9 +269,10 @@ class PostList extends React.Component {
                     value={searchType || ""}
                     style={{ marginRight: 10 }}
                   >
+                    <option value="">선택해주세요</option>
                     <option value="title">제목</option>
                     <option value="content">내용</option>
-                    <option value="">제목+내용</option>
+                    <option value="title_content">제목+내용</option>
                   </select>
                   <input
                     name="searchWord"
@@ -207,21 +287,21 @@ class PostList extends React.Component {
                   {/* <div className="search_custom_checkbox_div">
                     <div
                       className={`search_custom_checkbox ${
-                        this.state.subscribeEmail ? "true" : ""
+                        this.state.isMain ? "true" : ""
                       }`}
-                      onClick={() => this.handleCheckbox("subscribeEmail")}
-                      onKeyDown={() => this.handleCheckbox("subscribeEmail")}
+                      onClick={() => this.handleCheckbox("isMain")}
+                      onKeyDown={() => this.handleCheckbox("isMain")}
                     />
-                    <p>체크사항</p>
+                    <p>메인 포스트만</p>
                   </div> */}
-                  <input type="submit" value="검색" />
+                  <button onClick={this.handleSearch}>검색</button>
                 </div>
-              </form>
+              </div>
               <div className="complicated_search_btn_div">
                 <div>
                   <button
                     className="admin_blue_btn"
-                    onClick={this.handleUserAllList}
+                    onClick={this.handleReset}
                     style={{ marginRight: 10 }}
                   >
                     전체목록
@@ -237,28 +317,48 @@ class PostList extends React.Component {
             <div className="post_unit_wrap">
               {postList.map((el, idx) => (
                 <div key={idx} className="post_unit">
-                  <Link href={`/admin/post/edit?id=${el.id}`}>
-                    <div className="left_div" />
+                  <Link href={`/admin/post/edit?id=${el.post_id}`}>
+                    <div
+                      className="left_div"
+                      style={{
+                        backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=400)`,
+                      }}
+                    />
                   </Link>
                   <div className="right_div">
                     <div className="category_div">
-                      <p className={`category category_${idx + 1}`}>
-                        {el.category}
-                      </p>
+                      <div className="button_div">
+                        {el.is_main && (
+                          <p className="category main_post">메인 포스트</p>
+                        )}
+                        <p
+                          className={`category category_${el.category_number}`}
+                        >
+                          {el.category_name}
+                        </p>
+                      </div>
                       <p className="hits">
                         <img alt="조회수" src={Eye} />
-                        <span>{el.hits}</span>
+                        <span>{el.view_count}</span>
                       </p>
                     </div>
-                    <Link href={`/admin/post/edit?id=${el.id}`}>
+                    <Link href={`/admin/post/edit?id=${el.post_id}`}>
                       <div className="title_description_div">
                         <h3 className="title">{el.title}</h3>
                         <p className="description">{el.description}</p>
                       </div>
                     </Link>
                     <div className="bottom_div">
-                      <p className="date">{el.date}</p>
-                      <u className="delete_btn">삭제</u>
+                      <p className="date">
+                        {moment(el.created_at).format("YYYY년 M월 D일")}
+                      </p>
+                      <u
+                        className="delete_btn"
+                        onClick={() => this.deletePost(el.post_id)}
+                        onKeyDown={() => this.deletePost(el.post_id)}
+                      >
+                        삭제
+                      </u>
                     </div>
                   </div>
                 </div>
@@ -278,4 +378,4 @@ class PostList extends React.Component {
   }
 }
 
-export default PostList;
+export default withRouter(PostList);

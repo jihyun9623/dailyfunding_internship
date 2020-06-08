@@ -1,34 +1,16 @@
 // import Link from "next/link";
 
+import swal from "sweetalert";
+
 import AdminLayout from "Components/Common/Layout/AdminLayout/AdminLayout";
+import { getFetch, postFetch, deleteFetch } from "Utils/GetFetch";
 
 import xButton from "@Img/red_x_btn.svg";
 import "./category.scss";
 
 class CategoryList extends React.Component {
   state = {
-    categoryList: [
-      {
-        category_name: "데일리언",
-        url_name: "dailian",
-        sorting_number: 1,
-      },
-      {
-        category_name: "개발",
-        url_name: "development",
-        sorting_number: 2,
-      },
-      {
-        category_name: "꿀팁",
-        url_name: "honeytip",
-        sorting_number: 3,
-      },
-      {
-        category_name: "정보",
-        url_name: "information",
-        sorting_number: 4,
-      },
-    ],
+    categoryList: [],
     newItem: {
       category_name: "",
       url_name: "",
@@ -47,8 +29,26 @@ class CategoryList extends React.Component {
     document.removeEventListener("mousedown", this.handleClickOutside);
   }
 
+  // 카테고리 리스트 받아오기
   getCategoryList = () => {
-    console.log(1);
+    getFetch(
+      "/categories/posts/list/admin",
+      { token: true },
+      this.getCategoryListRes,
+    );
+  };
+
+  getCategoryListRes = (res) => {
+    if (res.message && res.message.indexOf("ERROR_IS") !== -1) {
+      swal({
+        text: "카테고리 정보를 받아오는 데 실패했습니다.",
+        button: "확인",
+      });
+    } else {
+      this.setState({
+        categoryList: res.category_list,
+      });
+    }
   };
 
   // reorder 내부의 input 편집
@@ -83,6 +83,7 @@ class CategoryList extends React.Component {
       categoryList,
       newItem: {
         category_name: "",
+        1: 1,
         url_name: "",
         sorting_number: 1,
       },
@@ -138,14 +139,54 @@ class CategoryList extends React.Component {
   };
 
   // 카테고리 삭제
-  deleteCategory = (idx) => {
-    const { categoryList } = this.state;
-
-    categoryList.splice(idx, 1);
-
-    this.setState({
-      categoryList,
+  deleteCategory = (el, idx) => {
+    // el.id 가 있을 때 (실제 존재하는 카테고리)와 없을 때 (신규로 추가한 카테고리일 때)로 분기
+    swal({
+      text: el.id
+        ? `해당 동작은 되돌릴 수 없습니다. "${el.category_name}" 카테고리를 삭제하시겠습니까?`
+        : "삭제하시겠습니까?",
+      buttons: ["취소", "확인"],
+    }).then((isTrue) => {
+      if (isTrue) {
+        deleteFetch(
+          "/categories/posts/admin",
+          JSON.stringify({ id: el.id }),
+          (res) => this.deleteCategoryRes(res, el.id, idx),
+        );
+      }
     });
+  };
+
+  deleteCategoryRes = (res, id, idx) => {
+    if (res.message === "CATEGORY_DOES_NOT_EXIST") {
+      swal({
+        text: "존재하지 않는 카테고리입니다.",
+        button: "확인",
+      }).then(() => this.getCategoryList());
+    } else if (res.message && res.message.indexOf("ERROR_IS") !== -1) {
+      swal({
+        text: id ? "필수 정보가 누락되었습니다." : "삭제되었습니다.",
+        button: "확인",
+      }).then(() => {
+        if (id) {
+          // 기존에 존재하던 카테고리를 삭제 시도한 경우
+          this.getCategoryList();
+        } else {
+          // 신규로 추가했던 카테고리를 삭제한 경우
+          const { categoryList } = this.state;
+          categoryList.splice(idx, 1);
+
+          this.setState({
+            categoryList,
+          });
+        }
+      });
+    } else if (res.message === "DELETE_SUCCESS") {
+      swal({
+        text: "삭제되었습니다.",
+        button: "확인",
+      }).then(() => this.getCategoryList());
+    }
   };
 
   // 수정 완료
@@ -156,9 +197,42 @@ class CategoryList extends React.Component {
       categoryList[i].sorting_number = i + 1;
     }
 
-    this.setState({
-      categoryList,
-    });
+    this.setState(
+      {
+        categoryList,
+      },
+      () =>
+        postFetch(
+          "/categories/posts/update/bulk/admin",
+          { token: true },
+          JSON.stringify(this.state.categoryList),
+          this.handleSubmitRes,
+        ),
+    );
+  };
+
+  handleSubmitRes = (res) => {
+    if (res.message === "INTEGRITY_ERROR") {
+      swal({
+        text: "중복된 카테고리 이름은 사용 불가합니다.",
+        button: "확인",
+      });
+    } else if (res.message && res.message.indexOf("KEY_ERROR") !== -1) {
+      swal({
+        text: "필수 입력 정보가 누락되었습니다.",
+        button: "확인",
+      });
+    } else if (res.message === "SUCCESS") {
+      swal({
+        text: "업데이트에 성공했습니다.",
+        button: "확인",
+      }).then(() => this.getCategoryList());
+    } else {
+      swal({
+        text: "업데이트 정보가 잘못되었습니다. 다시 시도해주세요.",
+        button: "확인",
+      });
+    }
   };
 
   render() {
@@ -217,8 +291,8 @@ class CategoryList extends React.Component {
                         <img
                           alt="삭제"
                           src={xButton}
-                          onClick={() => this.deleteCategory(idx)}
-                          onKeyDown={() => this.deleteCategory(idx)}
+                          onClick={() => this.deleteCategory(el, idx)}
+                          onKeyDown={() => this.deleteCategory(el, idx)}
                         />
                       </div>
                     </li>

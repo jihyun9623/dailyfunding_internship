@@ -126,7 +126,10 @@ class Main extends React.Component {
           commentOpenStatus: false,
           postId: Number(queryToObject(this.props.router.asPath).post_id) || "",
         },
-        () => this.getCommentList(),
+        () => {
+          this.getCommentList();
+          window.scroll(0, 0);
+        },
       );
     }
   };
@@ -369,9 +372,9 @@ class Main extends React.Component {
                     <button onClick={this.handleOpenComment}>
                       <img alt="댓글" src={CommentIcon} />
                       <span className="text">댓글</span>
-                      <span className="comment_number_mob">
-                        {commentNumber}
-                      </span>
+                      {commentNumber !== 0 && (
+                        <span className="comment_number">{commentNumber}</span>
+                      )}
                     </button>
                   )}
                 </div>

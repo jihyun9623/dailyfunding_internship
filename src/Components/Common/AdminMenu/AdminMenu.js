@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { withRouter } from "next/router";
+import { withRouter, Router } from "next/router";
 
 import { postFetch } from "Utils/GetFetch";
 import { getParams } from "Utils/QueryString";
@@ -172,6 +172,13 @@ class AdminMenu extends React.PureComponent {
     }
   };
 
+  handleLogout = () => {
+    localStorage.removeItem("ACTK");
+    localStorage.removeItem("RFTK");
+
+    Router.push("/");
+  };
+
   render() {
     return (
       <div className="admin_menu_wrapper">
@@ -186,12 +193,19 @@ class AdminMenu extends React.PureComponent {
             />
           </div>
           <div className="right_top">
-            <Link href="/admin">
+            {/* <Link href="/admin">
               <p className="top_link">관리자 메인</p>
-            </Link>
+            </Link> */}
             <Link href="/">
               <p className="top_link">홈페이지</p>
             </Link>
+            <p
+              className="top_link"
+              onClick={this.handleLogout}
+              onKeyDown={this.handleLogout}
+            >
+              로그아웃
+            </p>
             {/* <p
               className="top_link"
               onClick={this.handleLinkLogout}

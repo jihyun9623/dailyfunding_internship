@@ -51,21 +51,11 @@ const tokenCheckF = (token) => {
   console.log(Math.floor(jwt.exp) - Math.floor(currentTime));
 };
 
-const localStorageCheck = (key) => {
-  if (localStorage.getItem(key)) {
-    return true;
-  } else if (sessionStorage.getItem(key)) {
-    return false;
-  }
-};
-
 export const getToken = () => {
   return async (dispatch, getState) => {
-    const refreshToken =
-      localStorage.getItem("RFTK") || sessionStorage.getItem("RFTK") || "";
+    const refreshToken = localStorage.getItem("RFTK") || "";
     const tokenObj = {
-      token:
-        localStorage.getItem("ACTK") || sessionStorage.getItem("ACTK") || "",
+      token: localStorage.getItem("ACTK") || "",
       status: "get",
     };
 
@@ -73,12 +63,16 @@ export const getToken = () => {
 
     tokenCheckF(token);
     const { fetching } = getState().reducer;
+
     if (refreshToken && token && token.length > 0) {
+      // 만료되지않고 토큰이 유효할때
       if (checkTokenExpired(token)) {
         tokenObj.status = "expired";
+        // 만료되고 리프레쉬전
         if (!fetching) {
           await dispatch(loadfetching(true));
           tokenObj.status = "refresh_loading";
+          // 만료되고 리프레쉬 시작
           await fetch(`${constants.URL_BACK}/users/auth/refresh`, {
             method: "POST",
             headers: {
@@ -91,31 +85,38 @@ export const getToken = () => {
             .then((response) => response.json())
             .then((response) => {
               if (response.access_token) {
-                if (localStorageCheck("ACTK")) {
-                  localStorage.setItem("ACTK", response.access_token);
-                  dispatch(loadfetching(false));
-                } else {
-                  sessionStorage.setItem("ACTK", response.access_token);
-                  dispatch(loadfetching(false));
-                }
+                localStorage.setItem("ACTK", response.access_token);
+                dispatch(loadfetching(false));
                 tokenObj.token = response.access_token;
                 tokenObj.status = "refreshed";
+                // 리프레쉬 완료
                 return Promise.resolve(tokenObj);
               } else if (response.message === "REFRESH_TOKEN_EXPIRATION") {
                 // alert("로그인이 필요한 서비스입니다.");
                 // 자동 로그아웃
                 localStorage.removeItem("RFTK");
                 localStorage.removeItem("ACTK");
-                window.location.reload();
+                tokenObj.token = "";
+                tokenObj.status = "";
+                // 리프레쉬 실패 1
+                return Promise.resolve(tokenObj);
+                // window.location.reload();
               } else if (
                 response.message === "REFRESH_TOKEN_DOES_NOT_MATCHED"
               ) {
                 // 자동 로그아웃
                 localStorage.removeItem("RFTK");
                 localStorage.removeItem("ACTK");
-                window.location.reload();
+                tokenObj.token = "";
+                tokenObj.status = "";
+                // 리프레쉬 실패 2
+                return Promise.resolve(tokenObj);
+                // window.location.reload();
               } else if (response.message === "ACCESS_TOKEN_REQUIRED") {
                 alert("권한이 없는 페이지 입니다.");
+                tokenObj.token = "";
+                tokenObj.status = "";
+                // 권한 없음
               }
             })
             .catch((err) => {
@@ -123,16 +124,21 @@ export const getToken = () => {
             });
         } else {
           tokenObj.status = "refresh_not_done";
+          // 리프레시 아직 진행중
           return Promise.resolve(tokenObj);
         }
+        // 토큰이 만료되었으나 리프레쉬를 타지 않음.
         tokenObj.status = "refresh_not_done";
         return Promise.resolve(tokenObj);
       } else {
+        // 토큰이 만료되지 않았을때 2
         return Promise.resolve(tokenObj);
       }
     } else {
+      // 만료되지않고 애초에 토큰이 없을때
       tokenObj.token = "";
       tokenObj.status = "";
+
       return Promise.resolve(tokenObj);
     }
   };

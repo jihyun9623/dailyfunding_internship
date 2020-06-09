@@ -185,7 +185,7 @@ class Main extends React.Component {
     } else if (res.comment_list) {
       this.setState({
         commentList: res.comment_list,
-        commentNumber: res.comment_list.length,
+        commentNumber: res.comment_count,
       });
     }
   };
@@ -212,14 +212,7 @@ class Main extends React.Component {
 
   // 단순 뒤로가기가 아닌, 메인 페이지로 이동
   handleBackToMain = () => {
-    if (window.history.length !== 1 && !this.state.loginGuid) {
-      Router.back();
-    } else if (this.state.loginGuid) {
-      Router.push("/");
-    } else {
-      // 히스토리가 없을 때에는 메인 페이지로 리다이렉트
-      Router.push("/");
-    }
+    Router.push("/");
   };
 
   // 또 다른 인사이트 - 좌측으로 swipe

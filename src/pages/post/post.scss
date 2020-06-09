@@ -146,7 +146,7 @@
               letter-spacing: -1.86px;
               padding: 0;
               margin-bottom: 10px;
-              word-break: break-all;
+              word-break: keep-all;
 
               // 3줄 초과 ellipsis
               display: block;
@@ -805,7 +805,7 @@ section.article_content_wrap article.content {
   .image > figcaption {
     display: table-caption;
     caption-side: bottom;
-    word-break: break-word;
+    word-break: keep-all;
     color: hsl(0, 0%, 20%);
     background-color: hsl(0, 0%, 97%);
     padding: 0.6em;

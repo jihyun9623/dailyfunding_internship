@@ -255,7 +255,7 @@ class CommentSection extends React.Component {
         </div>
       </div>
     ) : (
-      <p className="comment">
+      <pre className="comment">
         {replyTarget && (
           <span>
             <img src={ToIcon} alt="to." />
@@ -263,7 +263,7 @@ class CommentSection extends React.Component {
           </span>
         )}
         {comment}
-      </p>
+      </pre>
     );
   };
 
@@ -552,7 +552,12 @@ class CommentSection extends React.Component {
                             : { marginBottom: 7 }
                         }
                       >
-                        <p className="email">
+                        <p
+                          className="email"
+                          style={
+                            el.deleted ? { marginRight: 9 } : { marginRight: 0 }
+                          }
+                        >
                           {el.is_secret && !el.content && !el.deleted
                             ? "비밀 댓글입니다"
                             : el.author}
@@ -673,7 +678,13 @@ class CommentSection extends React.Component {
                                     >
                                       수정
                                     </button>
-                                    <button>삭제</button>
+                                    <button
+                                      onClick={() =>
+                                        this.handleDeleteComment(el2.id)
+                                      }
+                                    >
+                                      삭제
+                                    </button>
                                   </div>
                                 )}
                               </div>

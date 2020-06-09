@@ -60,15 +60,20 @@ class Main extends React.Component {
     }
   }
 
-  state = {
-    admin: false,
-    windowSize: 0,
-    categoryId:
-      Number(queryToObject(this.props.router.asPath).category_id) || "",
-    categoryList: [],
-    postList: [],
-    pageNum: 1,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      admin: false,
+      windowSize: 0,
+      categoryId: Number(queryToObject(props.router.asPath).category_id) || "",
+      categoryList: [],
+      postList: [],
+      pageNum: 1,
+    };
+
+    this.scrollDiv = React.createRef();
+  }
 
   componentDidMount = () => {
     // 관리자인지 체크
@@ -184,11 +189,17 @@ class Main extends React.Component {
       () => {
         // shallow routing 을 이용해 쿼리스트링 변경해주기
         if (this.state.categoryId) {
+          // id 가 있을 경우 해당 카테고리로 이동
           Router.push(`/?category_id=${id}`, undefined, {
             shallow: true,
           }).then(() => this.getPostList());
+
+          this.scrollDiv.current.scrollIntoView(true);
         } else {
+          // id 가 없을 경우 전체보기로 이동
           Router.push("/").then(() => this.getPostList());
+
+          this.scrollDiv.current.scrollIntoView(true);
         }
       },
     );
@@ -295,13 +306,21 @@ class Main extends React.Component {
                     >
                       <div className="black_cover" />
                       <div className="carousel_cover">
-                        <Link href={`/post?post_id=${el.post_id}`}>
-                          <div className="center_div">
-                            <p className="category_badge">{el.category_name}</p>
+                        <div className="center_div">
+                          <p
+                            className="category_badge"
+                            onClick={() => this.selectCategory(el.category_id)}
+                            onKeyDown={() =>
+                              this.selectCategory(el.category_id)
+                            }
+                          >
+                            {el.category_name}
+                          </p>
+                          <Link href={`/post?post_id=${el.post_id}`}>
                             <p className="title">{el.title}</p>
-                            <p className="subtitle">{el.subtitle}</p>
-                          </div>
-                        </Link>
+                          </Link>
+                          <p className="subtitle">{el.subtitle}</p>
+                        </div>
                         <div className="bottom_div">
                           {el.created_at
                             ? moment(el.created_at).format("YYYY년 M월 D일")
@@ -327,7 +346,7 @@ class Main extends React.Component {
             </button>
           </section>
 
-          <section className="articles_list_wrap">
+          <section className="articles_list_wrap" ref={this.scrollDiv}>
             <div className="category_div">
               <div
                 className={`category_badge ${!categoryId ? "active" : ""}`}

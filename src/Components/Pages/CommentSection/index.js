@@ -24,7 +24,7 @@ class CommentSection extends React.Component {
       commentList: props.commentList,
     };
 
-    // this.inputFocus = React.createRef();
+    this.focusInput = React.createRef();
   }
 
   componentDidMount = () => {
@@ -104,28 +104,49 @@ class CommentSection extends React.Component {
         buttons: ["취소", "확인"],
       }).then((isTrue) => {
         if (isTrue) {
-          this.setState((prevState) => ({
-            replyingId: prevState.replyingId === id ? undefined : id,
-            replyData: "",
-            edittingComment: undefined,
-            edittingCommentData: "",
-          }));
+          this.setState(
+            (prevState) => ({
+              replyingId: prevState.replyingId === id ? undefined : id,
+              replyData: "",
+              edittingComment: undefined,
+              edittingCommentData: "",
+            }),
+            () => {
+              if (this.focusInput) {
+                this.focusInput.focus();
+              }
+            },
+          );
         }
       });
     } else if (replyingId && !replyData) {
       // 답글 창이 열려 있지만, 작성중이던 내용은 없는 경우
-      this.setState((prevState) => ({
-        replyingId: prevState.replyingId === id ? undefined : id,
-        edittingComment: undefined,
-        edittingCommentData: "",
-      }));
+      this.setState(
+        (prevState) => ({
+          replyingId: prevState.replyingId === id ? undefined : id,
+          edittingComment: undefined,
+          edittingCommentData: "",
+        }),
+        () => {
+          if (this.focusInput) {
+            this.focusInput.focus();
+          }
+        },
+      );
     } else {
       // 열려 있는 답글 창이 아무것도 없던 경우
-      this.setState({
-        replyingId: id,
-        edittingComment: undefined,
-        edittingCommentData: "",
-      });
+      this.setState(
+        {
+          replyingId: id,
+          edittingComment: undefined,
+          edittingCommentData: "",
+        },
+        () => {
+          if (this.focusInput) {
+            this.focusInput.focus();
+          }
+        },
+      );
     }
   };
 
@@ -170,16 +191,23 @@ class CommentSection extends React.Component {
 
   // 어떤 댓글, 답글이 수정중인지에 대한 처리 (댓글, 답글 둘 다 한 함수로 처리)
   handleEditComment = (el) => {
-    this.setState((prevState) => ({
-      replyingId: undefined,
-      replyData: "",
-      edittingComment: el.id,
-      edittingCommentIsSecret: el.is_secret,
-      edittingCommentData:
-        prevState.edittingComment === el.id
-          ? prevState.edittingCommentData
-          : el.content,
-    }));
+    this.setState(
+      (prevState) => ({
+        replyingId: undefined,
+        replyData: "",
+        edittingComment: el.id,
+        edittingCommentIsSecret: el.is_secret,
+        edittingCommentData:
+          prevState.edittingComment === el.id
+            ? prevState.edittingCommentData
+            : el.content,
+      }),
+      () => {
+        if (this.focusInput) {
+          this.focusInput.focus();
+        }
+      },
+    );
   };
 
   // 댓글 수정창 / 댓글 텍스트 둘 중 하나를 렌더하는 function
@@ -196,6 +224,10 @@ class CommentSection extends React.Component {
           name="edittingCommentData"
           defaultValue={comment}
           onChange={this.setInput}
+          ref={(ref) => {
+            this.focusInput = ref;
+          }}
+          onFocus={this.moveFocusAtEnd}
         />
         <div className="write_bottom_div">
           <p>
@@ -233,6 +265,13 @@ class CommentSection extends React.Component {
         {comment}
       </p>
     );
+  };
+
+  // 댓글 수정 시 focus 를 textarea 맨 뒤로 이동
+  moveFocusAtEnd = (e) => {
+    const tempValue = e.target.value;
+    e.target.value = "";
+    e.target.value = tempValue;
   };
 
   // 댓글 수정 완료 (댓글, 답글 둘 다 한 함수로 처리)
@@ -330,6 +369,9 @@ class CommentSection extends React.Component {
                 value={replyData || ""}
                 onClick={!token ? this.linkLoginPage : () => {}}
                 readOnly={!token}
+                ref={(ref) => {
+                  this.focusInput = ref;
+                }}
               />
               <div className="write_bottom_div">
                 <p>

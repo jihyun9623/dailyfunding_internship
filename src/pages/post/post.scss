@@ -375,14 +375,9 @@
               }
             }
 
-            &.comment_number_mob {
-              display: none;
-
-              @media #{$pad} {
-                display: block;
+            &.comment_number {
                 color: $theme-black2;
                 line-height: 1;
-              }
             }
           }
         }

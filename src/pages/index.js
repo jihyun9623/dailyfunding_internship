@@ -265,7 +265,7 @@ class Main extends React.Component {
                 </p>
               </a>
               {admin && (
-                <Link href="/admin">
+                <Link href="/admin/post">
                   <button className="link_to_admin">관리자</button>
                 </Link>
               )}

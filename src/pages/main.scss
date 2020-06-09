@@ -487,6 +487,14 @@
                 transform: unset;
               }
             }
+
+            @media only screen and (max-width: 1024px) {
+              filter: grayscale(0%);
+
+              &:hover {
+                transform: none;
+              }
+            }
           }
         }
 
@@ -503,7 +511,7 @@
 
           .category_badge {
             display: inline-block;
-            background-color: #8f8f8f;
+            background-color: #b0b1b4;
             color: white;
             padding: 4px 19px;
             font-size: 18px;

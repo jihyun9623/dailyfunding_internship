@@ -57,6 +57,7 @@
     font-family: $font-kr4;
     letter-spacing: -0.66px;
     line-height: 1.75;
+    word-break: keep-all;
 
     @media #{$pad} {
       font-size: 18px;

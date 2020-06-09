@@ -1,0 +1,17 @@
+@import "src/Style/global.scss";
+
+.admin_main_wrapper {
+  .admin_main_btn {
+    background-color: #f2f4f6;
+    color: $theme-black2;
+    font-size: 15px;
+    border-radius: 0;
+    padding: 40px;
+    margin-right: 10px;
+
+    &:hover {
+      background-color: $theme-blue1;
+      color: white;
+    }
+  }
+}

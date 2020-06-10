@@ -64,7 +64,7 @@ class Main extends React.Component {
     super(props);
 
     this.state = {
-      admin: false,
+      isAdmin: false,
       windowSize: 0,
       categoryId: Number(queryToObject(props.router.asPath).category_id) || "",
       categoryList: [],
@@ -76,9 +76,6 @@ class Main extends React.Component {
   }
 
   componentDidMount = () => {
-    // 관리자인지 체크
-    getFetch("/users/admin-check", { token: "any" }, this.adminCheckRes);
-
     // 카테고리 리스트
     getFetch(
       "/categories/posts/list",
@@ -109,10 +106,11 @@ class Main extends React.Component {
     });
   };
 
-  adminCheckRes = (response) => {
-    if (response.message === "ADMIN_CHECK_SUCCESS") {
-      this.setState({ admin: true });
-    }
+  // 관리자 세팅 (MainLayout으로부터 관리자 여부 받아옴)
+  setIsAdmin = (isAdmin) => {
+    this.setState({
+      isAdmin,
+    });
   };
 
   getCategoryListRes = (res) => {
@@ -122,19 +120,6 @@ class Main extends React.Component {
       });
     }
   };
-
-  // 상단 노출 포스트 리스트
-  // getMainPostList = () => {
-  //   getFetch("/posts/list/main", { token: "any" }, this.getMainPostListRes);
-  // };
-
-  // getMainPostListRes = (res) => {
-  //   if (res.post_list) {
-  //     this.setState({
-  //       mainPostList: res.post_list,
-  //     });
-  //   }
-  // };
 
   // 포스트 리스트
   getPostList = () => {
@@ -235,7 +220,7 @@ class Main extends React.Component {
 
     const {
       windowSize,
-      admin,
+      isAdmin,
       categoryList,
       categoryId,
       postList,
@@ -243,7 +228,7 @@ class Main extends React.Component {
     } = this.state;
 
     return (
-      <MainLayout>
+      <MainLayout setIsAdmin={this.setIsAdmin} refreshData={this.getPostList}>
         <div className="dailyblog_main_wrapper">
           {/* dynamic meta tag */}
           {/* 메인 포스트의 첫 포스트가 기준이 됩니다. */}
@@ -275,7 +260,7 @@ class Main extends React.Component {
                   <img alt="바로가기" src={CircleArrow} />
                 </p>
               </a>
-              {admin && (
+              {isAdmin && (
                 <Link href="/admin/post">
                   <button className="link_to_admin">관리자</button>
                 </Link>

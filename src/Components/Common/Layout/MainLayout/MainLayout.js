@@ -46,8 +46,18 @@ class AdminLayout extends React.Component {
         } else if (res.token) {
           localStorage.setItem("ACTK", res.token);
           localStorage.setItem("RFTK", res.refresh_token);
+          this.adminCheck();
+          // 추후 다른 로직으로 교체 가능한지 검토 필요. 토큰이 필요한 데이터를 refresh 해주는 역할.
+          // 댓글창을 통해 로그인해서 들어올 경우, 코멘트 리스트가 토큰 세팅 전에 미리 호출되기 때문에
+          // 토큰 세팅 후에 refresh 해줘야 함.
+          // 메인페이지의 경우에도 관리자만 비공개 포스트를 볼 수 있기 때문에 토큰 세팅 후 refresh 해줘야 함.
+          this.props.refreshData();
+        } else {
+          this.adminCheck();
         }
       });
+    } else if (token) {
+      this.adminCheck();
     }
 
     /* ----------------------------------------------------- */
@@ -103,6 +113,22 @@ class AdminLayout extends React.Component {
       getParams(this.props.router.asPath) || "",
     );
   }
+
+  /* ----------------------------------------------------- */
+  /*                                                       */
+  /*                    관리자인지 체크                        */
+  /*                                                       */
+  /* ----------------------------------------------------- */
+
+  adminCheck = () => {
+    getFetch("/users/admin-check", { token: "any" }, this.adminCheckRes);
+  };
+
+  adminCheckRes = (response) => {
+    if (response.message === "ADMIN_CHECK_SUCCESS") {
+      this.props.setIsAdmin(true);
+    }
+  };
 
   render() {
     return <>{this.props.children}</>;

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { withRouter, Router } from "next/router";
+import Router, { withRouter } from "next/router";
 
 import { postFetch } from "Utils/GetFetch";
 import { getParams } from "Utils/QueryString";
@@ -123,15 +123,6 @@ class AdminMenu extends React.PureComponent {
       });
     }
   };
-
-  // handleLinkLogout = () => {
-  //   localStorage.removeItem("ACTK");
-  //   localStorage.removeItem("RFTK");
-  //   sessionStorage.removeItem("ACTK");
-  //   sessionStorage.removeItem("RFTK");
-
-  //   this.props.history.push("/");
-  // };
 
   handleMenuArr = (thisArray, num) => {
     if (thisArray) {

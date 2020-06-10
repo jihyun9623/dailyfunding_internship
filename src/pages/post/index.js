@@ -106,16 +106,6 @@ class Main extends React.Component {
 
     // 코멘트 리스트
     this.getCommentList();
-
-    // 테스트
-    // localStorage.setItem(
-    //   "ACTK",
-    //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2VtYWlsIjoidGVtcEBkYWlseS5jb20iLCJleHAiOjE1OTExNzA3MDQuNDU5ODc1fQ.QkCxJT8w7t6LPpmNNkVK8qT4ZuhSrIC-qAPA2A7I0j0",
-    // );
-    // localStorage.setItem(
-    //   "RFTK",
-    //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2VtYWlsIjoidGVtcEBkYWlseS5jb20iLCJleHAiOjE1OTEyMzQ3MzUuMDczOTU2fQ.Sd0vPKY74ozPfarU5y1F1sqN5QL3ZeMo12V9Jeacg-c",
-    // );
   }
 
   componentDidUpdate = (prevProps) => {
@@ -141,6 +131,13 @@ class Main extends React.Component {
   handleWindowResize = () => {
     this.setState({
       windowSize: window.innerWidth,
+    });
+  };
+
+  // 관리자 세팅 (MainLayout으로부터 관리자 여부 받아옴)
+  setIsAdmin = (isAdmin) => {
+    this.setState({
+      isAdmin,
     });
   };
 
@@ -250,6 +247,7 @@ class Main extends React.Component {
 
   render() {
     const {
+      isAdmin,
       windowSize,
       commentOpenStatus,
       commentNumber,
@@ -275,7 +273,10 @@ class Main extends React.Component {
         <div />
       </MainLayout>
     ) : (
-      <MainLayout>
+      <MainLayout
+        setIsAdmin={this.setIsAdmin}
+        refreshData={this.getCommentList}
+      >
         <div className="dailyblog_post_wrapper">
           {/* dynamic meta tag */}
           <Head>
@@ -377,6 +378,7 @@ class Main extends React.Component {
             {/* 댓글 섹션 */}
             {commentOpenStatus && (
               <CommentSection
+                isAdmin={isAdmin}
                 postId={postId}
                 commentNumber={commentNumber}
                 commentList={commentList}

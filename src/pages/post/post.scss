@@ -73,14 +73,15 @@
         }
 
         @media #{$phone} {
-          padding-top: 185px;
-          align-items: flex-start;
+          padding-bottom: 61px;
+          align-items: flex-end;
         }
 
         .center_div {
           text-align: center;
 
           @media #{$phone} {
+            min-height: 181px;
             text-align: left;
             padding: 0 26px;
             width: 100%;
@@ -149,13 +150,13 @@
               margin-bottom: 10px;
               word-break: keep-all;
 
-              // 3줄 초과 ellipsis
-              display: block;
-              display: -webkit-box;
-              -webkit-line-clamp: 3;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
+              // // 3줄 초과 ellipsis
+              // display: block;
+              // display: -webkit-box;
+              // -webkit-line-clamp: 3;
+              // -webkit-box-orient: vertical;
+              // overflow: hidden;
+              // text-overflow: ellipsis;
             }
           }
 

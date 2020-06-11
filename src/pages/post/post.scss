@@ -96,6 +96,7 @@
             letter-spacing: -1.38px;
             margin-bottom: 18px;
             user-select: none;
+            cursor: pointer;
 
             @media #{$desk-L} {
               font-size: 20px;
@@ -358,6 +359,7 @@
 
           @media #{$pad} {
             border: none;
+            border-radius: 0;
             padding: 0;
           }
 
@@ -376,8 +378,8 @@
             }
 
             &.comment_number {
-                color: $theme-black2;
-                line-height: 1;
+              color: $theme-black2;
+              line-height: 1;
             }
           }
         }

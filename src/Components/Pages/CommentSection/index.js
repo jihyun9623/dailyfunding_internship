@@ -2,8 +2,9 @@ import { Router } from "next/router";
 
 import swal from "sweetalert";
 import * as moment from "moment";
+import "moment-timezone";
 
-import { getFetch, postFetch, deleteFetch } from "Utils/GetFetch";
+import { postFetch, deleteFetch } from "Utils/GetFetch";
 import * as constants from "constants.js";
 
 import "./CommentSection.scss";
@@ -18,7 +19,7 @@ class CommentSection extends React.Component {
     super(props);
 
     this.state = {
-      admin: false,
+      isAdmin: props.isAdmin,
       postId: props.postId,
       commentNumber: props.commentNumber,
       commentList: props.commentList,
@@ -31,15 +32,6 @@ class CommentSection extends React.Component {
     this.setState({
       token: localStorage.getItem("ACTK"),
     });
-
-    // 관리자인지 체크
-    getFetch("/users/admin-check", { token: "any" }, this.adminCheckRes);
-  };
-
-  adminCheckRes = (response) => {
-    if (response.message === "ADMIN_CHECK_SUCCESS") {
-      this.setState({ admin: true });
-    }
   };
 
   componentDidUpdate = (prevProps) => {
@@ -52,6 +44,12 @@ class CommentSection extends React.Component {
     if (prevProps.commentNumber !== this.props.commentNumber) {
       this.setState({
         commentNumber: this.props.commentNumber,
+      });
+    }
+
+    if (prevProps.isAdmin !== this.props.isAdmin) {
+      this.setState({
+        isAdmin: this.props.isAdmin,
       });
     }
   };
@@ -507,7 +505,7 @@ class CommentSection extends React.Component {
   render() {
     const {
       token,
-      admin,
+      isAdmin,
       commentNumber,
       commentList,
       edittingComment,
@@ -567,29 +565,34 @@ class CommentSection extends React.Component {
                           <>
                             <p className="dot" />
                             <p className="date">
-                              {moment(el.created_at).format("YYYY년 M월 D일")}
+                              {moment(el.created_at)
+                                .tz(moment.tz.guess())
+                                .format("YYYY년 M월 D일")}
                             </p>
                           </>
                         )}
-                        {el.is_secret && admin && (
+                        {el.is_secret && isAdmin && (
                           <img
                             className="secret_icon"
                             alt="비밀댓글"
                             src={SecretIcon}
                           />
                         )}
-                        {((!el.is_secret && !el.deleted) || admin) && (
+                        {((!el.is_secret && !el.deleted) || isAdmin) && (
                           <button onClick={() => this.handleReplyingId(el.id)}>
                             <img alt="답글 달기" src={ReplyIcon} />
                             {replyingId === el.id ? "취소" : "댓글"}
                           </button>
                         )}
                       </div>
-                      {el.is_mine && (
+                      {(el.is_mine || isAdmin) && (
                         <div className="right_buttons">
-                          <button onClick={() => this.handleEditComment(el)}>
-                            수정
-                          </button>
+                          {el.is_mine && (
+                            <button onClick={() => this.handleEditComment(el)}>
+                              수정
+                            </button>
+                          )}
+                          {/* 관리자의 경우 모든 댓글을 수정할 순 없지만 모든 댓글 삭제는 가능 */}
                           <button
                             onClick={() => this.handleDeleteComment(el.id)}
                           >
@@ -644,13 +647,13 @@ class CommentSection extends React.Component {
                                     <>
                                       <p className="dot" />
                                       <p className="date">
-                                        {moment(el2.created_at).format(
-                                          "YYYY년 M월 D일",
-                                        )}
+                                        {moment(el2.created_at)
+                                          .tz(moment.tz.guess())
+                                          .format("YYYY년 M월 D일")}
                                       </p>
                                     </>
                                   )}
-                                  {el2.is_secret && admin && (
+                                  {el2.is_secret && isAdmin && (
                                     <img
                                       className="secret_icon"
                                       alt="비밀댓글"
@@ -658,7 +661,7 @@ class CommentSection extends React.Component {
                                     />
                                   )}
                                   {((!el2.is_secret && !el2.deleted) ||
-                                    admin) && (
+                                    isAdmin) && (
                                     <button
                                       onClick={() =>
                                         this.handleReplyingId(el2.id)
@@ -669,15 +672,18 @@ class CommentSection extends React.Component {
                                     </button>
                                   )}
                                 </div>
-                                {el2.is_mine && (
+                                {(el2.is_mine || isAdmin) && (
                                   <div className="right_buttons">
-                                    <button
-                                      onClick={() =>
-                                        this.handleEditComment(el2)
-                                      }
-                                    >
-                                      수정
-                                    </button>
+                                    {el2.is_mine && (
+                                      <button
+                                        onClick={() =>
+                                          this.handleEditComment(el2)
+                                        }
+                                      >
+                                        수정
+                                      </button>
+                                    )}
+                                    {/* 관리자의 경우 모든 댓글을 수정할 순 없지만 모든 댓글 삭제는 가능 */}
                                     <button
                                       onClick={() =>
                                         this.handleDeleteComment(el2.id)

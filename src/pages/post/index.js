@@ -6,6 +6,7 @@ import { Swipeable } from "react-swipeable";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import swal from "sweetalert";
 import * as moment from "moment";
+import "moment-timezone";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import Footer from "Components/Common/Footer/Footer";
@@ -106,16 +107,6 @@ class Main extends React.Component {
 
     // 코멘트 리스트
     this.getCommentList();
-
-    // 테스트
-    // localStorage.setItem(
-    //   "ACTK",
-    //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2VtYWlsIjoidGVtcEBkYWlseS5jb20iLCJleHAiOjE1OTExNzA3MDQuNDU5ODc1fQ.QkCxJT8w7t6LPpmNNkVK8qT4ZuhSrIC-qAPA2A7I0j0",
-    // );
-    // localStorage.setItem(
-    //   "RFTK",
-    //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2VtYWlsIjoidGVtcEBkYWlseS5jb20iLCJleHAiOjE1OTEyMzQ3MzUuMDczOTU2fQ.Sd0vPKY74ozPfarU5y1F1sqN5QL3ZeMo12V9Jeacg-c",
-    // );
   }
 
   componentDidUpdate = (prevProps) => {
@@ -141,6 +132,13 @@ class Main extends React.Component {
   handleWindowResize = () => {
     this.setState({
       windowSize: window.innerWidth,
+    });
+  };
+
+  // 관리자 세팅 (MainLayout으로부터 관리자 여부 받아옴)
+  setIsAdmin = (isAdmin) => {
+    this.setState({
+      isAdmin,
     });
   };
 
@@ -192,7 +190,7 @@ class Main extends React.Component {
 
   filterCreatedAt = (createdAt) => {
     if (createdAt) {
-      return moment(createdAt).format("YYYY년 M월 D일");
+      return moment(createdAt).tz(moment.tz.guess()).format("YYYY년 M월 D일");
     } else {
       return "";
     }
@@ -250,6 +248,7 @@ class Main extends React.Component {
 
   render() {
     const {
+      isAdmin,
       windowSize,
       commentOpenStatus,
       commentNumber,
@@ -260,6 +259,7 @@ class Main extends React.Component {
     } = this.state;
 
     const {
+      categoryId,
       categoryName,
       title,
       subtitle,
@@ -275,7 +275,10 @@ class Main extends React.Component {
         <div />
       </MainLayout>
     ) : (
-      <MainLayout>
+      <MainLayout
+        setIsAdmin={this.setIsAdmin}
+        refreshData={this.getCommentList}
+      >
         <div className="dailyblog_post_wrapper">
           {/* dynamic meta tag */}
           <Head>
@@ -319,7 +322,9 @@ class Main extends React.Component {
               <div className="black_cover" />
               <div className="post_head_cover">
                 <div className="center_div">
-                  <p className="category_badge">{categoryName}</p>
+                  <Link href={`/?category_id=${categoryId}`}>
+                    <p className="category_badge">{categoryName}</p>
+                  </Link>
                   <h1 className="title">{title}</h1>
                   <p className="subtitle">{subtitle}</p>
                 </div>
@@ -377,6 +382,7 @@ class Main extends React.Component {
             {/* 댓글 섹션 */}
             {commentOpenStatus && (
               <CommentSection
+                isAdmin={isAdmin}
                 postId={postId}
                 commentNumber={commentNumber}
                 commentList={commentList}

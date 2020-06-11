@@ -4,6 +4,7 @@ import Head from "next/head";
 
 import AliceCarousel from "react-alice-carousel";
 import * as moment from "moment";
+import "moment-timezone";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import Footer from "Components/Common/Footer/Footer";
@@ -64,7 +65,7 @@ class Main extends React.Component {
     super(props);
 
     this.state = {
-      admin: false,
+      isAdmin: false,
       windowSize: 0,
       categoryId: Number(queryToObject(props.router.asPath).category_id) || "",
       categoryList: [],
@@ -76,9 +77,6 @@ class Main extends React.Component {
   }
 
   componentDidMount = () => {
-    // 관리자인지 체크
-    getFetch("/users/admin-check", { token: "any" }, this.adminCheckRes);
-
     // 카테고리 리스트
     getFetch(
       "/categories/posts/list",
@@ -109,10 +107,11 @@ class Main extends React.Component {
     });
   };
 
-  adminCheckRes = (response) => {
-    if (response.message === "ADMIN_CHECK_SUCCESS") {
-      this.setState({ admin: true });
-    }
+  // 관리자 세팅 (MainLayout으로부터 관리자 여부 받아옴)
+  setIsAdmin = (isAdmin) => {
+    this.setState({
+      isAdmin,
+    });
   };
 
   getCategoryListRes = (res) => {
@@ -123,21 +122,8 @@ class Main extends React.Component {
     }
   };
 
-  // 상단 노출 포스트 리스트
-  // getMainPostList = () => {
-  //   getFetch("/posts/list/main", { token: "any" }, this.getMainPostListRes);
-  // };
-
-  // getMainPostListRes = (res) => {
-  //   if (res.post_list) {
-  //     this.setState({
-  //       mainPostList: res.post_list,
-  //     });
-  //   }
-  // };
-
   // 포스트 리스트
-  getPostList = () => {
+  getPostList = (reset) => {
     const { pageNum, categoryId } = this.state;
 
     const params = {};
@@ -147,14 +133,22 @@ class Main extends React.Component {
     getFetch(
       `/posts/list${objectToQuerystring(params)}`,
       { token: "any" },
-      this.getPostListRes,
+      (res) => this.getPostListRes(res, reset),
     );
   };
 
-  getPostListRes = (res) => {
+  getPostListRes = (res, reset) => {
     if (res.post_list) {
-      const arr1 = [...this.state.postList];
-      const arr2 = arr1.concat(res.post_list);
+      let arr1;
+      let arr2;
+
+      if (reset) {
+        // 지금과 다른 카테고리를 선택했을 때
+        arr2 = res.post_list;
+      } else {
+        arr1 = [...this.state.postList];
+        arr2 = arr1.concat(res.post_list);
+      }
 
       this.setState(
         {
@@ -182,24 +176,29 @@ class Main extends React.Component {
   selectCategory = (id) => {
     this.setState(
       {
-        postList: [],
         categoryId: id,
         pageNum: 1,
       },
       () => {
+        const { windowSize } = this.state;
+        let scrollHeight;
+        windowSize > 768 && (scrollHeight = 814);
+        windowSize <= 768 && (scrollHeight = 580);
+        windowSize <= 414 && (scrollHeight = 427);
+
         // shallow routing 을 이용해 쿼리스트링 변경해주기
         if (this.state.categoryId) {
           // id 가 있을 경우 해당 카테고리로 이동
           Router.push(`/?category_id=${id}`, undefined, {
             shallow: true,
-          }).then(() => this.getPostList());
+          }).then(() => this.getPostList("reset"));
 
-          this.scrollDiv.current.scrollIntoView(true);
+          window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         } else {
           // id 가 없을 경우 전체보기로 이동
           Router.push("/").then(() => this.getPostList());
 
-          this.scrollDiv.current.scrollIntoView(true);
+          window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         }
       },
     );
@@ -235,7 +234,7 @@ class Main extends React.Component {
 
     const {
       windowSize,
-      admin,
+      isAdmin,
       categoryList,
       categoryId,
       postList,
@@ -243,7 +242,7 @@ class Main extends React.Component {
     } = this.state;
 
     return (
-      <MainLayout>
+      <MainLayout setIsAdmin={this.setIsAdmin} refreshData={this.getPostList}>
         <div className="dailyblog_main_wrapper">
           {/* dynamic meta tag */}
           {/* 메인 포스트의 첫 포스트가 기준이 됩니다. */}
@@ -275,7 +274,7 @@ class Main extends React.Component {
                   <img alt="바로가기" src={CircleArrow} />
                 </p>
               </a>
-              {admin && (
+              {isAdmin && (
                 <Link href="/admin/post">
                   <button className="link_to_admin">관리자</button>
                 </Link>
@@ -323,7 +322,9 @@ class Main extends React.Component {
                         </div>
                         <div className="bottom_div">
                           {el.created_at
-                            ? moment(el.created_at).format("YYYY년 M월 D일")
+                            ? moment(el.created_at)
+                                .tz(moment.tz.guess())
+                                .format("YYYY년 M월 D일")
                             : ""}
                         </div>
                       </div>
@@ -405,7 +406,9 @@ class Main extends React.Component {
                 onKeyDown={this.addPage}
               >
                 <p>MORE</p>
-                <img alt="더보기" src={DownArrow} />
+                <div>
+                  <img alt="더보기" src={DownArrow} />
+                </div>
               </div>
             )}
           </section>

@@ -196,7 +196,7 @@ class Main extends React.Component {
           window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         } else {
           // id 가 없을 경우 전체보기로 이동
-          Router.push("/").then(() => this.getPostList());
+          Router.push("/").then(() => this.getPostList("reset"));
 
           window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         }

@@ -4,6 +4,7 @@ import Head from "next/head";
 
 import AliceCarousel from "react-alice-carousel";
 import * as moment from "moment";
+import "moment-timezone";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import Footer from "Components/Common/Footer/Footer";
@@ -122,7 +123,7 @@ class Main extends React.Component {
   };
 
   // 포스트 리스트
-  getPostList = () => {
+  getPostList = (reset) => {
     const { pageNum, categoryId } = this.state;
 
     const params = {};
@@ -132,14 +133,22 @@ class Main extends React.Component {
     getFetch(
       `/posts/list${objectToQuerystring(params)}`,
       { token: "any" },
-      this.getPostListRes,
+      (res) => this.getPostListRes(res, reset),
     );
   };
 
-  getPostListRes = (res) => {
+  getPostListRes = (res, reset) => {
     if (res.post_list) {
-      const arr1 = [...this.state.postList];
-      const arr2 = arr1.concat(res.post_list);
+      let arr1;
+      let arr2;
+
+      if (reset) {
+        // 지금과 다른 카테고리를 선택했을 때
+        arr2 = res.post_list;
+      } else {
+        arr1 = [...this.state.postList];
+        arr2 = arr1.concat(res.post_list);
+      }
 
       this.setState(
         {
@@ -167,24 +176,29 @@ class Main extends React.Component {
   selectCategory = (id) => {
     this.setState(
       {
-        postList: [],
         categoryId: id,
         pageNum: 1,
       },
       () => {
+        const { windowSize } = this.state;
+        let scrollHeight;
+        windowSize > 768 && (scrollHeight = 814);
+        windowSize <= 768 && (scrollHeight = 580);
+        windowSize <= 414 && (scrollHeight = 427);
+
         // shallow routing 을 이용해 쿼리스트링 변경해주기
         if (this.state.categoryId) {
           // id 가 있을 경우 해당 카테고리로 이동
           Router.push(`/?category_id=${id}`, undefined, {
             shallow: true,
-          }).then(() => this.getPostList());
+          }).then(() => this.getPostList("reset"));
 
-          this.scrollDiv.current.scrollIntoView(true);
+          window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         } else {
           // id 가 없을 경우 전체보기로 이동
           Router.push("/").then(() => this.getPostList());
 
-          this.scrollDiv.current.scrollIntoView(true);
+          window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         }
       },
     );
@@ -308,7 +322,9 @@ class Main extends React.Component {
                         </div>
                         <div className="bottom_div">
                           {el.created_at
-                            ? moment(el.created_at).format("YYYY년 M월 D일")
+                            ? moment(el.created_at)
+                                .tz(moment.tz.guess())
+                                .format("YYYY년 M월 D일")
                             : ""}
                         </div>
                       </div>
@@ -390,7 +406,9 @@ class Main extends React.Component {
                 onKeyDown={this.addPage}
               >
                 <p>MORE</p>
-                <img alt="더보기" src={DownArrow} />
+                <div>
+                  <img alt="더보기" src={DownArrow} />
+                </div>
               </div>
             )}
           </section>

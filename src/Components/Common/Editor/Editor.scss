@@ -26,6 +26,11 @@
     border-color: $theme-grey6 !important;
   }
 
+  .ck.ck-color-grid {
+    max-height: 310px;
+    overflow-y: scroll;
+  }
+
   .ck.ck-button:not(.ck-disabled):hover {
     background-color: $theme-grey5;
   }

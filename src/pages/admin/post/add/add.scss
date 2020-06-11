@@ -1,7 +1,7 @@
 @import "src/Style/global.scss";
 
 .admin_post_add_wrapper {
-  max-width: 1017px;
+  max-width: 1017px !important;
 
   .post_info_div {
     display: flex;

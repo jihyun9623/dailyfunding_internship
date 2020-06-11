@@ -2,6 +2,7 @@ import { Router } from "next/router";
 
 import swal from "sweetalert";
 import * as moment from "moment";
+import "moment-timezone";
 
 import { postFetch, deleteFetch } from "Utils/GetFetch";
 import * as constants from "constants.js";
@@ -564,7 +565,9 @@ class CommentSection extends React.Component {
                           <>
                             <p className="dot" />
                             <p className="date">
-                              {moment(el.created_at).format("YYYY년 M월 D일")}
+                              {moment(el.created_at)
+                                .tz(moment.tz.guess())
+                                .format("YYYY년 M월 D일")}
                             </p>
                           </>
                         )}
@@ -644,9 +647,9 @@ class CommentSection extends React.Component {
                                     <>
                                       <p className="dot" />
                                       <p className="date">
-                                        {moment(el2.created_at).format(
-                                          "YYYY년 M월 D일",
-                                        )}
+                                        {moment(el2.created_at)
+                                          .tz(moment.tz.guess())
+                                          .format("YYYY년 M월 D일")}
                                       </p>
                                     </>
                                   )}

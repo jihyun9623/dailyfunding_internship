@@ -6,6 +6,7 @@ import { Swipeable } from "react-swipeable";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import swal from "sweetalert";
 import * as moment from "moment";
+import "moment-timezone";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import Footer from "Components/Common/Footer/Footer";
@@ -189,7 +190,7 @@ class Main extends React.Component {
 
   filterCreatedAt = (createdAt) => {
     if (createdAt) {
-      return moment(createdAt).format("YYYY년 M월 D일");
+      return moment(createdAt).tz(moment.tz.guess()).format("YYYY년 M월 D일");
     } else {
       return "";
     }
@@ -258,6 +259,7 @@ class Main extends React.Component {
     } = this.state;
 
     const {
+      categoryId,
       categoryName,
       title,
       subtitle,
@@ -320,7 +322,9 @@ class Main extends React.Component {
               <div className="black_cover" />
               <div className="post_head_cover">
                 <div className="center_div">
-                  <p className="category_badge">{categoryName}</p>
+                  <Link href={`/?category_id=${categoryId}`}>
+                    <p className="category_badge">{categoryName}</p>
+                  </Link>
                   <h1 className="title">{title}</h1>
                   <p className="subtitle">{subtitle}</p>
                 </div>

@@ -136,8 +136,16 @@ class PostAdd extends React.Component {
         mainImageGuid: response.guid,
         parentsGuid: response.parents_guid,
       });
+    } else if (response.message === "FILE_SIZE_MUST_BE_UNDER_10MB") {
+      swal({
+        text: "10MB 이하의 이미지만 업로드 가능합니다.",
+        button: "확인",
+      });
     } else {
-      swal("", "이미지 등록에 실패했습니다.", "error");
+      swal({
+        text: "이미지 등록에 실패했습니다.",
+        button: "확인",
+      });
     }
   };
 

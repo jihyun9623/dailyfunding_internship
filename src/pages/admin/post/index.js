@@ -3,6 +3,7 @@ import Router, { withRouter } from "next/router";
 
 import swal from "sweetalert";
 import * as moment from "moment";
+import "moment-timezone";
 
 import AdminLayout from "Components/Common/Layout/AdminLayout/AdminLayout";
 import ItemCount from "Components/Common/ItemCount/ItemCount";
@@ -350,7 +351,9 @@ class PostList extends React.Component {
                     </Link>
                     <div className="bottom_div">
                       <p className="date">
-                        {moment(el.created_at).format("YYYY년 M월 D일")}
+                        {moment(el.created_at)
+                          .tz(moment.tz.guess())
+                          .format("YYYY년 M월 D일")}
                       </p>
                       <u
                         className="delete_btn"

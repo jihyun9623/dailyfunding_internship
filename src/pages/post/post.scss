@@ -280,6 +280,7 @@
       padding-top: 67px;
       padding-bottom: 123px;
       user-select: none;
+      word-break: break-all;
 
       @media #{$pad} {
         font-size: 18px;

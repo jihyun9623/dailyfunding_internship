@@ -1,12 +1,15 @@
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import Router, { withRouter } from "next/router";
 
 import swal from "sweetalert";
+import { ToastContainer, toast } from "react-toastify";
 // 태그 관련 라이브러리
 // import { WithContext as ReactTags } from "react-tag-input";
 
 import AdminLayout from "Components/Common/Layout/AdminLayout/AdminLayout";
 import { getFetch, postFetch, deleteFetch } from "Utils/GetFetch";
+import { queryToObject } from "Utils/QueryString";
 import * as constants from "constants.js";
 
 import Arrow from "@Img/back_arrow.svg";
@@ -24,9 +27,14 @@ const Editor = dynamic(() => import("Components/Common/Editor/Editor.js"), {
 // };
 // const delimiters = [KeyCodes.enter];
 
+let autosaveTimer;
+
 class PostAdd extends React.Component {
   state = {
+    // draftId 는 임시저장글 목록에서 넘어왔을 경우에만 존재
+    draftId: Number(queryToObject(this.props.router.asPath).draft_id),
     description: "",
+    originalContent: "",
     content: "",
     categoryList: [],
     postHidden: false,
@@ -49,12 +57,59 @@ class PostAdd extends React.Component {
       { token: true },
       this.getCategoryListRes,
     );
+
+    // draft id 가 있을 경우에만 (임시저장글일 경우에만) 포스트 정보 받아오기
+    if (this.state.draftId) {
+      getFetch(
+        `/posts/admin?id=${this.state.draftId}`,
+        { token: true },
+        this.getPostInfoRes,
+      );
+    }
+  };
+
+  componentDidUpdate = () => {
+    // content 가 한 번 수정되고 나면 60초마다 자동 임시저장
+    if (this.state.content !== this.state.originalContent && !autosaveTimer) {
+      autosaveTimer = window.setInterval(() => this.handleSubmit(true), 60000);
+    }
+  };
+
+  componentWillUnmount = () => {
+    window.clearInterval(autosaveTimer);
   };
 
   getCategoryListRes = (res) => {
     if (res.category_list) {
       this.setState({
         categoryList: res.category_list,
+      });
+    }
+  };
+
+  getPostInfoRes = (res) => {
+    if (res.message === "POST_DOES_NOT_EXIST") {
+      swal({
+        text: "존재하지 않는 포스트입니다.",
+        button: "확인",
+      }).then(() => this.linkBack());
+    } else if (res.post_info) {
+      const info = res.post_info;
+
+      this.setState({
+        categoryId: info.category_id,
+        mainImageGuid: info.main_image_guid,
+        title: info.title,
+        subtitle: info.subtitle,
+        description: info.description,
+        // 주기적으로 임시저장을 하기 위해 비교대상으로 기존 contents 를 저장
+        originalContent: info.content,
+        content: info.content,
+        isMain: info.is_main,
+        postHidden: info.is_hidden,
+        subtitleHidden: info.author_hidden,
+        createdAtHidden: info.created_at_hidden,
+        commentHidden: !info.allow_comment,
       });
     }
   };
@@ -82,15 +137,11 @@ class PostAdd extends React.Component {
   };
 
   setImage = (e) => {
-    const { parentsGuid } = this.state;
     const photoFormData = new FormData();
 
     this.setState({ tempPhoto: e.target.files[0] }, () => {
       photoFormData.append("upload", this.state.tempPhoto);
       photoFormData.append("is_secret", "False");
-      if (parentsGuid) {
-        photoFormData.append("parents_guid", parentsGuid);
-      }
 
       postFetch("/files", { token: true }, photoFormData, this.uploadImageRes);
     });
@@ -100,7 +151,6 @@ class PostAdd extends React.Component {
     if (response.message === "SAVE_SUCCESS") {
       this.setState({
         mainImageGuid: response.guid,
-        parentsGuid: response.parents_guid,
       });
     } else if (response.message === "FILE_SIZE_MUST_BE_UNDER_10MB") {
       swal({
@@ -157,9 +207,10 @@ class PostAdd extends React.Component {
     }
   };
 
-  handleSubmit = () => {
+  // 임시저장, 출간하기 동시처리
+  handleSubmit = (draft) => {
     const {
-      parentsGuid,
+      draftId,
       mainImageGuid,
       categoryId,
       title,
@@ -174,7 +225,6 @@ class PostAdd extends React.Component {
     } = this.state;
 
     const data = {
-      parents_guid: parentsGuid,
       main_image_guid: mainImageGuid,
       category_id: categoryId,
       title,
@@ -188,14 +238,28 @@ class PostAdd extends React.Component {
       content,
     };
 
-    postFetch(
-      "/posts/admin",
-      { token: data },
-      JSON.stringify(data),
-      this.handleSubmitRes,
-    );
+    draftId && (data.draft_id = draftId);
+
+    if (draft) {
+      // 임시저장일 때
+      postFetch(
+        "/posts/draft/admin",
+        { token: true },
+        JSON.stringify(data),
+        this.handleDraftSaveRes,
+      );
+    } else {
+      // 출간일 때
+      postFetch(
+        "/posts/admin",
+        { token: true },
+        JSON.stringify(data),
+        this.handleSubmitRes,
+      );
+    }
   };
 
+  // 출간하기
   handleSubmitRes = (res) => {
     if (res.message && res.message.indexOf("ERROR_IS") !== -1) {
       swal({
@@ -207,6 +271,7 @@ class PostAdd extends React.Component {
       const { willDeleteGuid } = this.state;
 
       if (willDeleteGuid.length !== 0) {
+        // 삭제 예정 파일이 있을 경우
         for (let i = 0; i < willDeleteGuid.length; i++) {
           if (i + 1 !== willDeleteGuid.length) {
             deleteFetch(
@@ -223,7 +288,9 @@ class PostAdd extends React.Component {
           }
         }
       } else {
-        this.linkBack();
+        // 삭제 예정 파일이 없을 경우
+        // Router.back 은 사용하면 안 됨. (임시저장글 목록에서 넘어왔을 경우를 대비)
+        Router.push("/admin/post");
       }
     } else {
       swal({
@@ -239,6 +306,21 @@ class PostAdd extends React.Component {
     }
   };
 
+  // 임시저장
+  handleDraftSaveRes = (res) => {
+    if (res.message && res.message.indexOf("ERROR_IS") !== -1) {
+      toast.error("필수 항목이 누락되었습니다.");
+    } else if (res.draft_id) {
+      this.setState({
+        draftId: res.draft_id,
+      });
+
+      toast.info("게시글이 임시저장되었습니다.");
+    } else {
+      toast.error("알 수 없는 오류로 게시글을 임시저장하는데 실패했습니다.");
+    }
+  };
+
   render() {
     const {
       categoryList,
@@ -246,6 +328,7 @@ class PostAdd extends React.Component {
       title,
       subtitle,
       description,
+      content,
       mainImageGuid,
       isMain,
       postHidden,
@@ -259,6 +342,23 @@ class PostAdd extends React.Component {
     return (
       <AdminLayout>
         <div className="admin_section admin_post_add_wrapper">
+          <Head>
+            <title>포스트 등록 - 데일리 인사이트</title>
+            <meta id="og-type" property="og:type" content="website" />
+            <meta
+              id="og-title"
+              property="og:title"
+              content="포스트 등록 - 데일리 인사이트"
+            />
+            <meta
+              property="og:description"
+              content="포스트 등록 - 데일리 인사이트"
+            />
+            <meta property="og:image" content="Img/sns_logo.png" />
+          </Head>
+
+          <ToastContainer pauseOnFocusLoss={false} />
+
           <div className="admin_content_title">포스트 등록</div>
           <div className="admin_content">
             <div className="post_info_div">
@@ -333,7 +433,7 @@ class PostAdd extends React.Component {
                       className="input_default"
                       name="categoryId"
                       onChange={this.setInput}
-                      defaultValue={categoryId || ""}
+                      value={categoryId || ""}
                     >
                       <option value="">선택해주세요.</option>
                       {categoryList.map((el, idx) => (
@@ -351,7 +451,7 @@ class PostAdd extends React.Component {
                       className="input_default"
                       placeholder="작성자, 짧은 부제목 등을 입력해주세요."
                       onChange={this.setInput}
-                      defaultValue={subtitle || ""}
+                      value={subtitle || ""}
                     />
                   </div>
                 </div>
@@ -445,16 +545,27 @@ class PostAdd extends React.Component {
             </div>
 
             {/* 에디터 */}
-            <Editor getData={this.getDataFromEditor} />
+            <Editor getData={this.getDataFromEditor} content={content} />
 
             <div className="confirm_btn_div">
               <button className="admin_white_btn" onClick={this.linkBack}>
                 <img alt="뒤로" src={Arrow} />
                 <span>뒤로</span>
               </button>
-              <button className="admin_blue_btn" onClick={this.handleSubmit}>
-                출간하기
-              </button>
+              <div>
+                <button
+                  className="admin_light_grey_btn"
+                  onClick={() => this.handleSubmit(true)}
+                >
+                  임시저장
+                </button>
+                <button
+                  className="admin_blue_btn"
+                  onClick={() => this.handleSubmit(false)}
+                >
+                  출간하기
+                </button>
+              </div>
             </div>
           </div>
         </div>

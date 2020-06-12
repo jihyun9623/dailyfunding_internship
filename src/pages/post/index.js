@@ -110,7 +110,7 @@ class Main extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    // parameter 가 바뀔 경우 comment list 를 다시 받아오는 로직
+    // parameter 가 바뀔 경우 comment list 와 insight list 를 다시 받아오는 로직
     if (prevProps.router.asPath !== this.props.router.asPath) {
       this.setState(
         {
@@ -119,6 +119,7 @@ class Main extends React.Component {
         },
         () => {
           this.getCommentList();
+          this.getInsightList();
           window.scroll(0, 0);
         },
       );

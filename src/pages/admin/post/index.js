@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Head from "next/head";
 import Router, { withRouter } from "next/router";
 
 import swal from "sweetalert";
@@ -215,6 +216,20 @@ class PostList extends React.Component {
     return (
       <AdminLayout>
         <div className="admin_section admin_post_list_wrapper">
+          <Head>
+            <title>포스트 관리 - 데일리 인사이트</title>
+            <meta id="og-type" property="og:type" content="website" />
+            <meta
+              id="og-title"
+              property="og:title"
+              content="포스트 관리 - 데일리 인사이트"
+            />
+            <meta
+              property="og:description"
+              content="포스트 관리 - 데일리 인사이트"
+            />
+            <meta property="og:image" content="Img/sns_logo.png" />
+          </Head>
           <div className="admin_content_title">포스트 관리</div>
           <div className="admin_content">
             {/* 컴플리 */}
@@ -226,9 +241,18 @@ class PostList extends React.Component {
                     {numberFormat(totalCount)}
                   </p>
                 </div>
-                <Link href="/admin/post/add">
-                  <button className="admin_border_blue_btn">포스트 등록</button>
-                </Link>
+                <div>
+                  <Link href="/admin/post/draft">
+                    <button className="admin_border_grey_btn">
+                      임시 글 목록
+                    </button>
+                  </Link>
+                  <Link href="/admin/post/add">
+                    <button className="admin_border_blue_btn">
+                      포스트 등록
+                    </button>
+                  </Link>
+                </div>
               </div>
               <div className="complicated_search_div">
                 <div className="complicated_search_row">

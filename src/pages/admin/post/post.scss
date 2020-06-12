@@ -12,10 +12,15 @@
     .complicated_info_div {
       margin: 0 !important;
     }
+
+    .admin_border_grey_btn {
+      margin-right: 10px;
+    }
   }
 
   .post_unit_wrap {
     margin-top: 20px;
+    min-width: 920px;
 
     .post_unit {
       display: flex;

@@ -145,9 +145,11 @@ class Main extends React.Component {
   // 또 다른 인사이트 리스트 받아오기 (같은 카테고리의 포스트들)
   getInsightList = () => {
     const { categoryId } = this.props;
+    const { postId } = this.state;
     const params = {};
 
     categoryId && (params.category_id = categoryId);
+    params.post_id = postId;
     params.item_count = 6;
 
     getFetch(

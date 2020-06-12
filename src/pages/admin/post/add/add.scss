@@ -259,9 +259,24 @@
     margin-top: 30px;
 
     .admin_white_btn,
+    .admin_light_grey_btn,
     .admin_blue_btn {
       padding: 7px 12px;
       font-size: 15px;
+    }
+
+    .admin_blue_btn:hover {
+      background-color: darken($theme-blue1, 5%);
+    }
+
+    .admin_light_grey_btn {
+      background-color: #f2f4f6;
+      color: $theme-black2;
+      margin-right: 10px;
+
+      &:hover {
+        background-color: darken(#f2f4f6, 5%);
+      }
     }
 
     .admin_white_btn {

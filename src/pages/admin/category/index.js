@@ -1,4 +1,5 @@
 // import Link from "next/link";
+import Head from "next/head";
 
 import swal from "sweetalert";
 
@@ -241,6 +242,20 @@ class CategoryList extends React.Component {
     return (
       <AdminLayout>
         <div className="admin_section admin_category_sort_wrapper">
+          <Head>
+            <title>카테고리 관리 - 데일리 인사이트</title>
+            <meta id="og-type" property="og:type" content="website" />
+            <meta
+              id="og-title"
+              property="og:title"
+              content="카테고리 관리 - 데일리 인사이트"
+            />
+            <meta
+              property="og:description"
+              content="카테고리 관리 - 데일리 인사이트"
+            />
+            <meta property="og:image" content="Img/sns_logo.png" />
+          </Head>
           <div className="admin_content_title">카테고리 관리</div>
           <div className="admin_content">
             <div className="category_sort_wrap" ref={this.sortSection}>

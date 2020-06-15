@@ -7,6 +7,7 @@ import * as moment from "moment";
 import "moment-timezone";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
+import ScrollTopBtn from "Components/Common/ScrollTopBtn";
 import Footer from "Components/Common/Footer/Footer";
 import { getFetch } from "Utils/GetFetch";
 import { queryToObject, objectToQuerystring } from "Utils/QueryString";
@@ -260,6 +261,8 @@ class Main extends React.Component {
               }
             />
           </Head>
+
+          <ScrollTopBtn />
 
           <header className="top_div">
             <img alt="데일리 인사이트 - 데일리펀딩 블로그" src={Logo} />

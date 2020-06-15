@@ -1,0 +1,16 @@
+@import "src/Style/global.scss";
+
+.to_top_btn {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  width: 61px;
+  cursor: pointer;
+  z-index: 100;
+
+  @media #{$pad} {
+    right: 14px;
+    bottom: 14px;
+    width: 47px;
+  }
+}

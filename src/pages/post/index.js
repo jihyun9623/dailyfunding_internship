@@ -424,7 +424,7 @@ class Main extends React.Component {
                         <div
                           className="image_div"
                           style={{
-                            backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid})`,
+                            backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=400)`,
                           }}
                         >
                           <div className="category_div">
@@ -463,7 +463,7 @@ class Main extends React.Component {
                         <div
                           className="image_div"
                           style={{
-                            backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid})`,
+                            backgroundImage: `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=600)`,
                           }}
                         >
                           <div className="category_div">

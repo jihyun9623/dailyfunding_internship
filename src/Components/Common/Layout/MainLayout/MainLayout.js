@@ -1,9 +1,13 @@
-import { withRouter } from "next/router";
+import Router, { withRouter } from "next/router";
 
 import swal from "sweetalert";
 
 import { getFetch, postFetch } from "Utils/GetFetch";
-import { queryToObject, getParams } from "Utils/QueryString";
+import {
+  queryToObject,
+  getParams,
+  objectToQuerystring,
+} from "Utils/QueryString";
 import * as constants from "constants.js";
 
 class AdminLayout extends React.Component {
@@ -23,6 +27,13 @@ class AdminLayout extends React.Component {
 
     if (guid && !token) {
       getFetch(`/users/auth?guid=${guid}`, { token: false }, (res) => {
+        // 일단 url 에서 guid 제거
+        const returnpath = queryToObject(this.props.router.asPath);
+        delete returnpath.guid;
+        Router.push(
+          this.props.router.pathname + objectToQuerystring(returnpath),
+        );
+
         if (res.message === "NOT_MATCHED_CODE") {
           swal({
             text:
@@ -30,22 +41,23 @@ class AdminLayout extends React.Component {
             button: "확인",
           });
         } else if (res.message === "USER_AUTH_DOES_NOT_EXIST") {
-          swal({
-            text:
-              "로그인 내역이 없습니다. 데일리펀딩 사이트를 통해 로그인해주세요.",
-            button: "확인",
-          }).then(() => {
-            window.open(
-              `${
-                constants.URL_LOGIN
-              }/bbs/login.php?from=dailyblog&fromurl=${encodeURIComponent(
-                `${this.props.router.asPath}`,
-              )}`,
-            );
-          });
+          // swal({
+          //   text:
+          //     "로그인 내역이 없습니다. 데일리펀딩 사이트를 통해 로그인해주세요.",
+          //   button: "확인",
+          // }).then(() => {
+          //   window.open(
+          //     `${
+          //       constants.URL_LOGIN
+          //     }/bbs/login.php?from=dailyblog&fromurl=${encodeURIComponent(
+          //       `${this.props.router.asPath}`,
+          //     )}`,
+          //   );
+          // });
         } else if (res.token) {
           localStorage.setItem("ACTK", res.token);
           localStorage.setItem("RFTK", res.refresh_token);
+
           this.adminCheck();
           // 추후 다른 로직으로 교체 가능한지 검토 필요. 토큰이 필요한 데이터를 refresh 해주는 역할.
           // 댓글창을 통해 로그인해서 들어올 경우, 코멘트 리스트가 토큰 세팅 전에 미리 호출되기 때문에

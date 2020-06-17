@@ -25,15 +25,13 @@ class AdminLayout extends React.Component {
     const { guid } = this.state;
     const token = localStorage.getItem("ACTK") || "";
 
+    // 일단 url 에서 guid 제거
+    const returnpath = queryToObject(this.props.router.asPath);
+    delete returnpath.guid;
+    Router.push(this.props.router.pathname + objectToQuerystring(returnpath));
+
     if (guid && !token) {
       getFetch(`/users/auth?guid=${guid}`, { token: false }, (res) => {
-        // 일단 url 에서 guid 제거
-        const returnpath = queryToObject(this.props.router.asPath);
-        delete returnpath.guid;
-        Router.push(
-          this.props.router.pathname + objectToQuerystring(returnpath),
-        );
-
         if (res.message === "NOT_MATCHED_CODE") {
           swal({
             text:

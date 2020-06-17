@@ -292,28 +292,34 @@ class Editor extends React.Component {
             heading: {
               options: [
                 {
+                  model: "heading2",
+                  view: "h2",
+                  title: "헤더2",
+                  class: "ck-heading_heading1",
+                },
+                {
+                  model: "heading3",
+                  view: "h3",
+                  title: "헤더3",
+                  class: "ck-heading_heading2",
+                },
+                {
+                  model: "heading4",
+                  view: "h4",
+                  title: "헤더4",
+                  class: "ck-heading_heading3",
+                },
+                {
                   model: "paragraph",
                   view: "p",
                   title: "본문",
                   class: "ck-heading_paragraph",
                 },
                 {
-                  model: "heading1",
-                  view: "h1",
-                  title: "헤더1",
-                  class: "ck-heading_heading1",
-                },
-                {
-                  model: "heading2",
-                  view: "h2",
-                  title: "헤더2",
-                  class: "ck-heading_heading2",
-                },
-                {
-                  model: "heading3",
-                  view: "h3",
-                  title: "헤더3",
-                  class: "ck-heading_heading3",
+                  model: "small",
+                  view: "small",
+                  title: "주석",
+                  class: "ck-small",
                 },
               ],
             },

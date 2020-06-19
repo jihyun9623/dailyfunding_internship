@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env next dev",
+    "dev": "cross-env node server.js next dev -p 80",
     "build": "cross-env next build",
-    "start": "cross-env next start -p 80"
+    "start": "cross-env NODE_ENV=production node server.js next start -p 80"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-alignment": "^19.0.0",

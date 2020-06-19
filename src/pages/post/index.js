@@ -317,7 +317,7 @@ class Main extends React.Component {
                 backgroundImage:
                   windowSize <= 768
                     ? windowSize <= 414
-                      ? `url(${constants.URL_BACK}/files?guid=${mainImageGuid}&width=550)`
+                      ? `url(${constants.URL_BACK}/files?guid=${mainImageGuid}&width=700)`
                       : `url(${constants.URL_BACK}/files?guid=${mainImageGuid}&width=900)`
                     : `url(${constants.URL_BACK}/files?guid=${mainImageGuid})`,
               }}

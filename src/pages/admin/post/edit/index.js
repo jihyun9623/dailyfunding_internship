@@ -232,51 +232,51 @@ class PostAdd extends React.Component {
 
   // 임시저장, 출간하기 동시처리
   handleSubmit = (draft) => {
-    swal({
-      text: "정식 출간하시겠습니까?",
-      buttons: ["취소", "확인"],
-    }).then((isTrue) => {
-      if (isTrue) {
-        const {
-          postId,
-          mainImageGuid,
-          categoryId,
-          title,
-          subtitle,
-          description,
-          isMain,
-          postHidden,
-          commentHidden,
-          subtitleHidden,
-          createdAtHidden,
-          content,
-        } = this.state;
+    const {
+      postId,
+      mainImageGuid,
+      categoryId,
+      title,
+      subtitle,
+      description,
+      isMain,
+      postHidden,
+      commentHidden,
+      subtitleHidden,
+      createdAtHidden,
+      content,
+    } = this.state;
 
-        const data = {
-          id: postId,
-          main_image_guid: mainImageGuid,
-          category_id: categoryId,
-          title,
-          subtitle,
-          description,
-          is_main: isMain,
-          is_hidden: postHidden,
-          allow_comment: !commentHidden,
-          author_hidden: subtitleHidden,
-          created_at_hidden: createdAtHidden,
-          content,
-        };
+    const data = {
+      id: postId,
+      main_image_guid: mainImageGuid,
+      category_id: categoryId,
+      title,
+      subtitle,
+      description,
+      is_main: isMain,
+      is_hidden: postHidden,
+      allow_comment: !commentHidden,
+      author_hidden: subtitleHidden,
+      created_at_hidden: createdAtHidden,
+      content,
+    };
 
-        if (draft) {
-          // 임시저장일 때
-          postFetch(
-            "/posts/temp/admin",
-            { token: true },
-            JSON.stringify(data),
-            this.handleDraftSaveRes,
-          );
-        } else {
-          // 출간일 때
+    if (draft) {
+      // 임시저장일 때
+      postFetch(
+        "/posts/temp/admin",
+        { token: true },
+        JSON.stringify(data),
+        this.handleDraftSaveRes,
+      );
+    } else {
+      // 출간일 때
+      swal({
+        text: "정식 출간하시겠습니까?",
+        buttons: ["취소", "확인"],
+      }).then((isTrue) => {
+        if (isTrue) {
           postFetch(
             "/posts/update/admin",
             { token: true },
@@ -284,8 +284,8 @@ class PostAdd extends React.Component {
             this.handleSubmitRes,
           );
         }
-      }
-    });
+      });
+    }
   };
 
   handleSubmitRes = (res) => {

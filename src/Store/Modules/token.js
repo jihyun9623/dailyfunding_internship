@@ -2,8 +2,10 @@
 
 // 액션과 리듀서를 기능별로 분류하여 하나의 파일에 작성하게 되는데 이를 module
 // 액션 타입 (어떤 모듈에 있는 타입인지 구분짓기위한 상장성 경로)
-import { checkTokenExpired, alert } from "Store/Lib/Function";
 
+import swal from "sweetalert";
+
+import { checkTokenExpired, alert } from "Store/Lib/Function";
 import * as constants from "constants.js";
 
 const LOAD_FETCHING = "token/LOAD_FETCHING";
@@ -117,6 +119,13 @@ export const getToken = () => {
                 tokenObj.token = "";
                 tokenObj.status = "";
                 // 권한 없음
+              } else if (response.message === "UNUSUAL_APPROACH") {
+                // 백엔드에서 요청한 alert. 확인 필요
+                // agent 정보가 없는 유저일 경우임.
+                swal({
+                  text: "비정상적인 접근입니다.",
+                  button: "확인",
+                });
               }
             })
             .catch((err) => {

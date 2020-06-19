@@ -38,6 +38,8 @@ const alert = (text, dontreturn) => {
 const fetchOn = async (parameter, callback) => {
   const token = localStorage.getItem("ACTK") || "";
 
+  console.log("getFetch", !!token);
+
   await fetch(`${constants.URL_BACK}${parameter}`, {
     method: "GET",
     headers: token
@@ -60,6 +62,14 @@ const fetchOn = async (parameter, callback) => {
       } else if (response.message === "ACCESS_TOKEN_NOT_EXIST") {
         // alert("로그인이 필요한 서비스입니다.");
         // window.location.reload();
+        console.log("ACCESS_TOKEN_NOT_EXIST");
+      } else if (response.message === "UNUSUAL_APPROACH") {
+        // 백엔드에서 요청한 alert. 확인 필요
+        // agent 정보가 없는 유저일 경우임.
+        swal({
+          text: "비정상적인 접근입니다.",
+          button: "확인",
+        });
       } else {
         await callback(response);
       }
@@ -205,6 +215,13 @@ const postOn = async (parameter, bodyData, callback, resolve) => {
           sessionStorage.removeItem("ACTK");
           sessionStorage.removeItem("RFTK");
         }
+      } else if (response.message === "UNUSUAL_APPROACH") {
+        // 백엔드에서 요청한 alert. 확인 필요
+        // agent 정보가 없는 유저일 경우임.
+        swal({
+          text: "비정상적인 접근입니다.",
+          button: "확인",
+        });
       } else {
         await callback(response, resolve);
       }
@@ -308,6 +325,13 @@ const deleteOn = async (parameter, bodyData, callback) => {
           sessionStorage.removeItem("ACTK");
           sessionStorage.removeItem("RFTK");
         }
+      } else if (response.message === "UNUSUAL_APPROACH") {
+        // 백엔드에서 요청한 alert. 확인 필요
+        // agent 정보가 없는 유저일 경우임.
+        swal({
+          text: "비정상적인 접근입니다.",
+          button: "확인",
+        });
       } else {
         await callback(response);
       }

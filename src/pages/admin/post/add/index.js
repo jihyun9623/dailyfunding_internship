@@ -209,54 +209,61 @@ class PostAdd extends React.Component {
 
   // 임시저장, 출간하기 동시처리
   handleSubmit = (draft) => {
-    const {
-      draftId,
-      mainImageGuid,
-      categoryId,
-      title,
-      subtitle,
-      description,
-      isMain,
-      postHidden,
-      commentHidden,
-      subtitleHidden,
-      createdAtHidden,
-      content,
-    } = this.state;
+    swal({
+      text: "정식 출간하시겠습니까?",
+      buttons: ["취소", "확인"],
+    }).then((isTrue) => {
+      if (isTrue) {
+        const {
+          draftId,
+          mainImageGuid,
+          categoryId,
+          title,
+          subtitle,
+          description,
+          isMain,
+          postHidden,
+          commentHidden,
+          subtitleHidden,
+          createdAtHidden,
+          content,
+        } = this.state;
 
-    const data = {
-      main_image_guid: mainImageGuid,
-      category_id: categoryId,
-      title,
-      subtitle,
-      description,
-      is_main: isMain,
-      is_hidden: postHidden,
-      allow_comment: !commentHidden,
-      author_hidden: subtitleHidden,
-      created_at_hidden: createdAtHidden,
-      content,
-    };
+        const data = {
+          main_image_guid: mainImageGuid,
+          category_id: categoryId,
+          title,
+          subtitle,
+          description,
+          is_main: isMain,
+          is_hidden: postHidden,
+          allow_comment: !commentHidden,
+          author_hidden: subtitleHidden,
+          created_at_hidden: createdAtHidden,
+          content,
+        };
 
-    draftId && (data.draft_id = draftId);
+        draftId && (data.draft_id = draftId);
 
-    if (draft) {
-      // 임시저장일 때
-      postFetch(
-        "/posts/draft/admin",
-        { token: true },
-        JSON.stringify(data),
-        this.handleDraftSaveRes,
-      );
-    } else {
-      // 출간일 때
-      postFetch(
-        "/posts/admin",
-        { token: true },
-        JSON.stringify(data),
-        this.handleSubmitRes,
-      );
-    }
+        if (draft) {
+          // 임시저장일 때
+          postFetch(
+            "/posts/draft/admin",
+            { token: true },
+            JSON.stringify(data),
+            this.handleDraftSaveRes,
+          );
+        } else {
+          // 출간일 때
+          postFetch(
+            "/posts/admin",
+            { token: true },
+            JSON.stringify(data),
+            this.handleSubmitRes,
+          );
+        }
+      }
+    });
   };
 
   // 출간하기

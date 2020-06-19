@@ -8,16 +8,16 @@ class Example extends React.Component {
   state = {
     itemCount: 15, // 10, 15, 20, 50, 100 중 초기값을 선택해 주시면 됩니다.
     pageNum: 1, // ItemCount 컴포넌트는 반드시 Pagination 컴포넌트와 함께 쓰이기에 초기값을 설정해줍니다.
-    list: []
+    list: [],
   };
 
-  handleItemCount = num => {
+  handleItemCount = (num) => {
     this.setState(
       {
         itemCount: num,
-        pageNum: 1 // itemCount가 바뀔때에는 pageNum도 1로 초기화해줍니다.
+        pageNum: 1, // itemCount가 바뀔때에는 pageNum도 1로 초기화해줍니다.
       },
-      () => this.onFetch()
+      () => this.onFetch(),
     );
   };
 
@@ -30,25 +30,25 @@ class Example extends React.Component {
       {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
-        }
-      }
+          "Content-Type": "application/json",
+        },
+      },
     )
-      .then(response => response.json())
-      .then(response => {
+      .then((response) => response.json())
+      .then((response) => {
         this.setState({
           list: response.list,
-          totalItemNum: response.total_num
+          totalItemNum: response.total_num,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <ItemCount
           itemCount={this.state.itemCount}
           handleItemCount={this.handleItemCount}
@@ -64,7 +64,7 @@ class Example extends React.Component {
           totalItemsCount={this.state.totalItemNum}
           change={this.linkPage}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

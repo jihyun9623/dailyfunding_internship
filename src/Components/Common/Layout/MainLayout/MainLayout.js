@@ -52,7 +52,17 @@ class AdminLayout extends React.Component {
           //     )}`,
           //   );
           // });
+        } else if (res.message === "UNUSUAL_APPROACH") {
+          // 백엔드에서 요청한 alert. 확인 필요
+          // agent 정보가 없는 유저일 경우임.
+          swal({
+            text: "비정상적인 접근입니다.",
+            button: "확인",
+          });
         } else if (res.token) {
+          localStorage.removeItem("ACTK");
+          localStorage.removeItem("RFTK");
+          console.log("mainLayout", !!localStorage.getItem("RFTK"));
           localStorage.setItem("ACTK", res.token);
           localStorage.setItem("RFTK", res.refresh_token);
 

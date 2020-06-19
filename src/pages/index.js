@@ -22,45 +22,45 @@ import DownArrow from "@Img/down.png";
 import "./main.scss";
 
 class Main extends React.Component {
-  // getServerSideProps 로 변경 예정
-  static async getInitialProps() {
-    // 포스트 정보 prefetch
-    let res;
+  // document Head 를 분기처리할 경우 (현재는 데일리 인사이트 소개 이미지로 고정)
+  // static async getInitialProps() {
+  //   // 포스트 정보 prefetch
+  //   let res;
 
-    await fetch(`${constants.URL_BACK}/posts/list/main`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.post_list) {
-          res = response.post_list;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  //   await fetch(`${constants.URL_BACK}/posts/list/main`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((response) => {
+  //       if (response.post_list) {
+  //         res = response.post_list;
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
 
-    if (res && res.length !== 0) {
-      // 메인 포스트가 존재할 때는 page Head 에 첫 포스트 정보 삽입
-      return {
-        mainPostList: res,
-        mainPostTitle: res[0].title,
-        mainPostDescription: res[0].description,
-        mainPostGuid: res[0].main_image_guid,
-      };
-    } else {
-      // 메인 포스트가 존재하지 않을 때는 '데일리 인사이트' 타이틀과 로고 이미지 삽입
-      return {
-        mainPostList: [],
-        mainPostTitle: "데일리 인사이트",
-        mainPostDescription: "",
-        mainPostGuid: undefined,
-      };
-    }
-  }
+  //   if (res && res.length !== 0) {
+  //     // 메인 포스트가 존재할 때는 page Head 에 첫 포스트 정보 삽입
+  //     return {
+  //       mainPostList: res,
+  //       mainPostTitle: res[0].title,
+  //       mainPostDescription: res[0].description,
+  //       mainPostGuid: res[0].main_image_guid,
+  //     };
+  //   } else {
+  //     // 메인 포스트가 존재하지 않을 때는 '데일리 인사이트' 타이틀과 로고 이미지 삽입
+  //     return {
+  //       mainPostList: [],
+  //       mainPostTitle: "데일리 인사이트",
+  //       mainPostDescription: "",
+  //       mainPostGuid: undefined,
+  //     };
+  //   }
+  // }
 
   constructor(props) {
     super(props);
@@ -70,6 +70,7 @@ class Main extends React.Component {
       windowSize: 0,
       categoryId: Number(queryToObject(props.router.asPath).category_id) || "",
       categoryList: [],
+      mainPostList: [],
       postList: [],
       pageNum: 1,
     };
@@ -81,12 +82,12 @@ class Main extends React.Component {
     // 카테고리 리스트
     getFetch(
       "/categories/posts/list",
-      { token: "any" },
+      { token: false },
       this.getCategoryListRes,
     );
 
     // 상단 노출 포스트 리스트
-    // this.getMainPostList();
+    getFetch("/posts/list/main", { token: "any" }, this.getMainPostListRes);
 
     // 포스트 리스트
     this.getPostList();
@@ -119,6 +120,15 @@ class Main extends React.Component {
     if (res.category_list) {
       this.setState({
         categoryList: res.category_list,
+      });
+    }
+  };
+
+  // 상단 노출 포스트 리스트
+  getMainPostListRes = (res) => {
+    if (res.post_list) {
+      this.setState({
+        mainPostList: res.post_list,
       });
     }
   };
@@ -215,25 +225,17 @@ class Main extends React.Component {
     );
   };
 
-  // article title 이 몇 줄인지 세는 함수
-  // countLines = (id) => {
-  //   const el = document.getElementById(`content${id}`);
-  //   const divHeight = el.offsetHeight;
-  //   const lineHeight = parseInt(el.style.lineHeight);
-  //   const lines = divHeight / lineHeight;
-
-  //   return lines;
-  // };
-
   render() {
+    // document HEAD 를 분기처리 할 경우
+    // const {
+    //   mainPostList,
+    //   mainPostTitle,
+    //   mainPostDescription,
+    //   mainPostGuid,
+    // } = this.props;
+
     const {
       mainPostList,
-      mainPostTitle,
-      mainPostDescription,
-      mainPostGuid,
-    } = this.props;
-
-    const {
       windowSize,
       isAdmin,
       categoryList,
@@ -245,21 +247,19 @@ class Main extends React.Component {
     return (
       <MainLayout setIsAdmin={this.setIsAdmin} refreshData={this.getPostList}>
         <div className="dailyblog_main_wrapper">
-          {/* dynamic meta tag */}
-          {/* 메인 포스트의 첫 포스트가 기준이 됩니다. */}
           <Head>
-            <title>{mainPostTitle}</title>
+            <title>데일리펀딩의 특별한 블로그, 데일리 인사이트 </title>
             <meta id="og-type" property="og:type" content="website" />
-            <meta id="og-title" property="og:title" content={mainPostTitle} />
-            <meta property="og:description" content={mainPostDescription} />
             <meta
-              property="og:image"
-              content={
-                mainPostGuid
-                  ? `${constants.URL_BACK}/files?guid=${mainPostGuid}`
-                  : "Img/sns_logo.png"
-              }
+              id="og-title"
+              property="og:title"
+              content="데일리펀딩의 특별한 블로그, 데일리 인사이트"
             />
+            <meta
+              property="og:description"
+              content="일상이 특별해지는 금융 데일리펀딩의 이야기가 담긴 블로그"
+            />
+            <meta property="og:image" content="Img/sns_logo.png" />
           </Head>
 
           <ScrollTopBtn />
@@ -298,11 +298,12 @@ class Main extends React.Component {
                       key={idx}
                       className="carousel_item"
                       style={{
+                        width: windowSize,
                         backgroundImage:
                           windowSize <= 768
                             ? windowSize <= 414
-                              ? `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=700)`
-                              : `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&width=900)`
+                              ? `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&height=600)`
+                              : `url(${constants.URL_BACK}/files?guid=${el.main_image_guid}&height=700)`
                             : `url(${constants.URL_BACK}/files?guid=${el.main_image_guid})`,
                       }}
                     >

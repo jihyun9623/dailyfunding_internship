@@ -1,13 +1,14 @@
 // server.js
+const express = require("express");
 const http = require("http");
 const https = require("https");
-const { parse } = require("url");
 const next = require("next");
 const fs = require("fs");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
+const server = express();
 
 const httpsOptions = {
   key: fs.readFileSync("./certificates/private.key"),
@@ -15,56 +16,26 @@ const httpsOptions = {
   ca: fs.readFileSync("./certificates/ca_bundle.crt"),
 };
 
-let port;
-
-if (process.env.NODE_ENV === "development") {
-  port = 3000;
-} else {
-  port = 443;
-}
-
 app.prepare().then(() => {
+  server.all("*", (req, res) => {
+    return handle(req, res);
+  });
+
   if (process.env.NODE_ENV === "development") {
-    http
-      .createServer((req, res) => {
-        // Be sure to pass `true` as the second argument to `url.parse`.
-        // This tells it to parse the query portion of the URL.
-        const parsedUrl = parse(req.url, true);
-        const { pathname, query } = parsedUrl;
-
-        if (pathname === "/a") {
-          app.render(req, res, "/a", query);
-        } else if (pathname === "/b") {
-          app.render(req, res, "/b", query);
-        } else {
-          handle(req, res, parsedUrl);
-        }
-      })
-      .listen(port, (err) => {
-        if (err) throw err;
-
-        console.log(`> Ready on http://localhost:3000`);
-      });
+    // 개발환경일 경우 http, 3000포트로 실행
+    http.createServer(server).listen(3000);
   } else {
-    https
-      .createServer(httpsOptions, (req, res) => {
-        // Be sure to pass `true` as the second argument to `url.parse`.
-        // This tells it to parse the query portion of the URL.
-        const parsedUrl = parse(req.url, true);
-        const { pathname, query } = parsedUrl;
-
-        if (pathname === "/a") {
-          app.render(req, res, "/a", query);
-        } else if (pathname === "/b") {
-          app.render(req, res, "/b", query);
-        } else {
-          handle(req, res, parsedUrl);
-        }
-      })
-      .listen(port, (err) => {
-        if (err) throw err;
-
-        console.log(`> Ready on https://blog.daily-funding.com`);
-      });
+    // 배포환경일 경우 http 와 https 모두 열어둔 후 http 로 접속할 경우 https 로 리다이렉트
+    http.createServer(server).listen(80);
+    https.createServer(httpsOptions, server).listen(443);
+    // server.use((req1, res1, tonext) => {
+    //   if (req1.secure) {
+    //     // request was via https, so do no special handling
+    //     tonext();
+    //   } else {
+    //     // request was via http, so redirect to https
+    //     res1.redirect(`https://${req.headers.host}${req.url}`);
+    //   }
+    // });
   }
 });

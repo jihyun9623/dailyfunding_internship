@@ -9,8 +9,8 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const httpsOptions = {
-  pfx: fs.readFileSync("./Keys/certificate.pfx"),
-  passphrase: "",
+  key: fs.readFileSync("./Keys/private.pem"),
+  cert: fs.readFileSync("./Keys/public.pem"),
 };
 
 app.prepare().then(() => {
@@ -27,7 +27,7 @@ app.prepare().then(() => {
     } else {
       handle(req, res, parsedUrl);
     }
-  }).listen(80, (err) => {
+  }).listen(443, (err) => {
     if (err) throw err;
     console.log("> Ready on http://localhost");
   });

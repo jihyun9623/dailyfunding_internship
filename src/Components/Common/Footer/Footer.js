@@ -74,25 +74,13 @@ class Footer extends React.Component {
     return (
       <footer className="footer_wrapper">
         <div className="icon_div">
-          <a
-            href="https://blog.naver.com/daily-funding"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="https://blog.naver.com/daily-funding" target="_blank">
             <img alt="데일리펀딩 네이버 블로그" src={Blog} />
           </a>
-          <a
-            href="https://www.instagram.com/dailyfunding/"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="https://www.instagram.com/dailyfunding/" target="_blank">
             <img alt="데일리펀딩 인스타그램" src={Insta} />
           </a>
-          <a
-            href="https://brunch.co.kr/@dailian#articles"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="https://brunch.co.kr/@dailian#articles" target="_blank">
             <img alt="데일리펀딩 브런치" src={Brunch} />
           </a>
         </div>
@@ -110,11 +98,7 @@ class Footer extends React.Component {
             <button onClick={this.sendEmail}>신청하기 {">"}</button>
           </div>
         </div>
-        <a
-          href="https://www.daily-funding.com/"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href="https://www.daily-funding.com/" target="_blank">
           <div className="linkto_funding_div">
             <p>이 모든 걸 경험할 수 있는</p>
             <em>데일리펀딩 바로가기</em>

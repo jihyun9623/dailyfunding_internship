@@ -101,8 +101,8 @@ export const getToken = () => {
                 tokenObj.token = "";
                 tokenObj.status = "";
                 // 리프레쉬 실패 1
+                window.location.reload();
                 return Promise.resolve(tokenObj);
-                // window.location.reload();
               } else if (
                 response.message === "REFRESH_TOKEN_DOES_NOT_MATCHED"
               ) {
@@ -113,7 +113,6 @@ export const getToken = () => {
                 tokenObj.status = "";
                 // 리프레쉬 실패 2
                 return Promise.resolve(tokenObj);
-                // window.location.reload();
               } else if (response.message === "ACCESS_TOKEN_REQUIRED") {
                 alert("권한이 없는 페이지 입니다.");
                 tokenObj.token = "";

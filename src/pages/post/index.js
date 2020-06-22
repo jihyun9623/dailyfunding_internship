@@ -402,11 +402,7 @@ class Main extends React.Component {
                     우리는 지속가능한 금융을 만들어가는 <br />
                     투명한 종합 금융 플랫폼입니다.
                   </p>
-                  <a
-                    href="https://www.xn--2n1b71jm8kvwb.com/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href="https://www.xn--2n1b71jm8kvwb.com/" target="_blank">
                     <u>데일리언과 함께하기 {">"}</u>
                   </a>
                 </div>

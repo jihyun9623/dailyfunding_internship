@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env node server.js next dev -p 80",
+    "dev": "cross-env NODE_ENV=development node server.js next dev",
     "build": "cross-env next build",
     "start": "cross-env NODE_ENV=production node server.js next start -p 80"
   },

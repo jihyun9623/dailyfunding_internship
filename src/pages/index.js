@@ -267,11 +267,7 @@ class Main extends React.Component {
           <header className="top_div">
             <img alt="데일리 인사이트 - 데일리펀딩 블로그" src={Logo} />
             <div>
-              <a
-                href="https://www.daily-funding.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://www.daily-funding.com/" target="_blank">
                 <p className="link_to_dailyfunding">
                   <span>데일리펀딩 바로가기</span>
                   <img alt="바로가기" src={CircleArrow} />

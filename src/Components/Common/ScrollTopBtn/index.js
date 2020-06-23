@@ -1,3 +1,5 @@
+import smoothscroll from "smoothscroll-polyfill";
+
 import "./ScrollTopBtn.scss";
 
 class ScrollTopBtn extends React.Component {
@@ -10,6 +12,7 @@ class ScrollTopBtn extends React.Component {
   };
 
   scrollTop = () => {
+    smoothscroll.polyfill();
     window.scroll({
       top: 0,
       behavior: "smooth",

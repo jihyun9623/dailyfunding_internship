@@ -61,6 +61,7 @@
     "redux": "^4.0.5",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0",
+    "smoothscroll-polyfill": "^0.4.4",
     "sweetalert": "^2.1.2"
   },
   "devDependencies": {

@@ -94,6 +94,11 @@ class DraftList extends React.Component {
     );
   };
 
+  // 미리보기 창 열기
+  openPreview = (draftId) => {
+    window.open(`/admin/post/draft/preview?draft_id=${draftId}`);
+  };
+
   // 포스트 삭제
   deletePost = (postId) => {
     swal({
@@ -168,10 +173,10 @@ class DraftList extends React.Component {
                       </div>
                       <u
                         className="delete_btn"
-                        onClick={() => this.deletePost(el.post_id)}
-                        onKeyDown={() => this.deletePost(el.post_id)}
+                        onClick={() => this.openPreview(el.post_id)}
+                        onKeyDown={() => this.openPreview(el.post_id)}
                       >
-                        삭제
+                        미리보기
                       </u>
                     </div>
                     <Link href={`/admin/post/add?draft_id=${el.post_id}`}>
@@ -186,6 +191,13 @@ class DraftList extends React.Component {
                           .tz(moment.tz.guess())
                           .format("YYYY년 M월 D일")}
                       </p>
+                      <u
+                        className="delete_btn"
+                        onClick={() => this.deletePost(el.post_id)}
+                        onKeyDown={() => this.deletePost(el.post_id)}
+                      >
+                        삭제
+                      </u>
                     </div>
                   </div>
                 </div>

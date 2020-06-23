@@ -1,5 +1,4 @@
 import Document, { Head, Main, NextScript } from "next/document";
-// import React from "react";
 
 export default class DailyDocument extends Document {
   render() {
@@ -49,18 +48,6 @@ export default class DailyDocument extends Document {
           {/* Noto sans 서체 import */}
           <link
             href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,400,500,700,900&display=swap"
-            rel="stylesheet"
-            type="text/css"
-          />
-          {/* Noto serif KR 서체 import */}
-          {/* <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
-            rel="stylesheet"
-            type="text/css"
-          /> */}
-          {/* canada-type-gibson 서체 import */}
-          <link
-            href="https://use.typekit.net/bat1rdm.css"
             rel="stylesheet"
             type="text/css"
           />

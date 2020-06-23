@@ -21,6 +21,10 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
+  // server.get("*", (request, response) => {
+  //   response.redirect(`https://${request.headers.host}${request.url}`);
+  // });
+
   if (process.env.NODE_ENV === "development") {
     // 개발환경일 경우 http, 3000포트로 실행
     http.createServer(server).listen(3000);

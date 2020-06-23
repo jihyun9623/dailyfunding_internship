@@ -30,7 +30,11 @@ class AdminLayout extends React.Component {
     delete returnpath.guid;
     Router.push(this.props.router.pathname + objectToQuerystring(returnpath));
 
-    if (guid && !token) {
+    if (guid) {
+      // guid 가 들어오면 무조건 존재하던 토큰을 삭제하고 다시 user/auth 처리
+      localStorage.removeItem("ACTK");
+      localStorage.removeItem("RFTK");
+
       getFetch(`/users/auth?guid=${guid}`, { token: false }, (res) => {
         if (res.message === "NOT_MATCHED_CODE") {
           swal({
@@ -60,9 +64,6 @@ class AdminLayout extends React.Component {
             button: "확인",
           });
         } else if (res.token) {
-          localStorage.removeItem("ACTK");
-          localStorage.removeItem("RFTK");
-          console.log("mainLayout", !!localStorage.getItem("RFTK"));
           localStorage.setItem("ACTK", res.token);
           localStorage.setItem("RFTK", res.refresh_token);
 
@@ -76,7 +77,7 @@ class AdminLayout extends React.Component {
           this.adminCheck();
         }
       });
-    } else if (token) {
+    } else if (!guid && token) {
       this.adminCheck();
     }
 

@@ -1,8 +1,6 @@
 @import "src/Style/global.scss";
 
 .dailyblog_main_wrapper {
-  position: relative;
-
   header.top_div {
     position: absolute;
     display: flex;
@@ -149,7 +147,7 @@
             display: inline-block;
             border-radius: 22px;
             border: 1px solid white;
-            padding: 4px 26px;
+            padding: 3px 26px 5px 26px;
             font-size: 23px;
             font-weight: 300;
             letter-spacing: -1.38px;

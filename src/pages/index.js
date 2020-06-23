@@ -5,6 +5,7 @@ import Head from "next/head";
 import AliceCarousel from "react-alice-carousel";
 import * as moment from "moment";
 import "moment-timezone";
+import smoothscroll from "smoothscroll-polyfill";
 
 import MainLayout from "Components/Common/Layout/MainLayout/MainLayout";
 import ScrollTopBtn from "Components/Common/ScrollTopBtn";
@@ -204,11 +205,13 @@ class Main extends React.Component {
             shallow: true,
           }).then(() => this.getPostList("reset"));
 
+          smoothscroll.polyfill();
           window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         } else {
           // id 가 없을 경우 전체보기로 이동
           Router.push("/").then(() => this.getPostList("reset"));
 
+          smoothscroll.polyfill();
           window.scrollTo({ top: scrollHeight, behavior: "smooth" });
         }
       },

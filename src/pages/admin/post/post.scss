@@ -52,6 +52,10 @@
           justify-content: space-between;
           margin-bottom: 10px;
 
+          u:hover {
+            cursor: pointer;
+          }
+
           .button_div {
             display: flex;
             align-items: center;

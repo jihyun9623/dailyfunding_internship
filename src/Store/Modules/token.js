@@ -86,7 +86,6 @@ export const getToken = () => {
           })
             .then((response) => response.json())
             .then((response) => {
-              console.log(response.message);
               if (response.access_token) {
                 localStorage.setItem("ACTK", response.access_token);
                 dispatch(loadfetching(false));
@@ -113,7 +112,7 @@ export const getToken = () => {
                 tokenObj.token = "";
                 tokenObj.status = "";
                 // 리프레쉬 실패 2
-                // window.location.reload();
+                window.location.reload();
                 return Promise.resolve(tokenObj);
               } else if (response.message === "ACCESS_TOKEN_REQUIRED") {
                 alert("권한이 없는 페이지 입니다.");

@@ -16,6 +16,12 @@ class AdminLayout extends React.Component {
   };
 
   componentDidMount() {
+    // http 에서 https 리다이렉트
+    const httpTokens = /^http:\/\/(.*)$/.exec(window.location.href);
+    if (httpTokens && process.env.NODE_ENV !== "development") {
+      window.location.replace(`https://${httpTokens[1]}`);
+    }
+
     /* ----------------------------------------------------- */
     /*                                                       */
     /*          데일리펀딩 로그인을 통해 유입되었을 경우 처리           */

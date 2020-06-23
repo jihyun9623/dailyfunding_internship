@@ -19,6 +19,12 @@ class AdminLayout extends React.Component {
   }
 
   componentDidMount() {
+    // http 에서 https 리다이렉트
+    const httpTokens = /^http:\/\/(.*)$/.exec(window.location.href);
+    if (httpTokens && process.env.NODE_ENV !== "development") {
+      window.location.replace(`https://${httpTokens[1]}`);
+    }
+
     getFetch("/users/admin-check", { token: true }, this.adminCheckRes);
   }
 

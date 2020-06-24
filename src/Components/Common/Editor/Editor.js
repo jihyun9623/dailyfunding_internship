@@ -341,7 +341,7 @@ class Editor extends React.Component {
               contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
             },
             image: {
-              // 이걸 활성화시키면 resize 시 처음 설정한 픽셀이 고정됩니다.
+              // 이걸 활성화시키면 resize 시 % 가 아닌 픽셀값으로 고정됩니다.
               // resizeUnit: "px",
               toolbar: [
                 "imageStyle:alignLeft",

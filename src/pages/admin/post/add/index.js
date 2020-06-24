@@ -137,14 +137,28 @@ class PostAdd extends React.Component {
   };
 
   setImage = (e) => {
-    const photoFormData = new FormData();
+    const fileSize = e.target.files[0].size / 1000000; // in MB
 
-    this.setState({ tempPhoto: e.target.files[0] }, () => {
-      photoFormData.append("upload", this.state.tempPhoto);
-      photoFormData.append("is_secret", "False");
+    if (fileSize > 10) {
+      swal({
+        text: "10MB 가 넘는 파일은 업로드할 수 없습니다.",
+        button: "확인",
+      });
+    } else {
+      const photoFormData = new FormData();
 
-      postFetch("/files", { token: true }, photoFormData, this.uploadImageRes);
-    });
+      this.setState({ tempPhoto: e.target.files[0] }, () => {
+        photoFormData.append("upload", this.state.tempPhoto);
+        photoFormData.append("is_secret", "False");
+
+        postFetch(
+          "/files",
+          { token: true },
+          photoFormData,
+          this.uploadImageRes,
+        );
+      });
+    }
   };
 
   uploadImageRes = (response) => {

@@ -78,7 +78,7 @@ class AdminLayout extends React.Component {
           // 댓글창을 통해 로그인해서 들어올 경우, 코멘트 리스트가 토큰 세팅 전에 미리 호출되기 때문에
           // 토큰 세팅 후에 refresh 해줘야 함.
           // 메인페이지의 경우에도 관리자만 비공개 포스트를 볼 수 있기 때문에 토큰 세팅 후 refresh 해줘야 함.
-          this.props.refreshData();
+          this.props.refreshData("reset");
         } else {
           this.adminCheck();
         }

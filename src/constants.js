@@ -6,7 +6,9 @@
 
 export const URL_BACK =
   process.env.NODE_ENV === "development"
-    ? "http://192.168.0.6:9000"
+    // ? "http://192.168.0.6:9000"//원래IP
+    // ? "http://192.168.0.80:8000"//민우님IP
+    ? "http://192.168.0.54:8000"//민철님IP
     : "https://blog.daily-funding.com:8001";
 // http://192.168.0.87:9000
 
